@@ -6,9 +6,9 @@ of a robot's actuators.
 """
 
 from typing import List
-from mosaicolabs.models.header_mixin import HeaderMixin
 import pyarrow as pa
 
+from ..header_mixin import HeaderMixin
 from ..serializable import Serializable
 
 

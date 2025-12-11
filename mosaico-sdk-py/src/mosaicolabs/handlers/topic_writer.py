@@ -14,13 +14,12 @@ from mosaicolabs.models.message import Message
 import pyarrow.flight as fl
 import logging as log
 
-from mosaicolabs.models.sensors import Serializable
+from mosaicolabs.models import Serializable
 from .internal.topic_write_state import _TopicWriteState
 from .helpers import _make_exception
 from ..helpers import pack_topic_resource_name
 from ..comm.do_action import _do_action
-from ..enum import FlightAction
-from .enum import OnErrorPolicy
+from ..enum import FlightAction, OnErrorPolicy
 from .config import WriterConfig
 
 

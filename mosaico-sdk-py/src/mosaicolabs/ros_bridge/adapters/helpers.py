@@ -1,8 +1,7 @@
 from typing import Dict, Optional, Type
+from mosaicolabs.models import Header
 
 from ..adapter_base import ROSAdapterBase
-from ..ros_bridge import ROSBridge
-from mosaicolabs.models.header import Header
 
 
 def _make_header(ros_head_dict: Optional[Dict]) -> Optional[Header]:
@@ -34,11 +33,3 @@ def _validate_msgdata(
             f"Malformed ROS message {cls.ros_msgtype}: missing required keys {missing_keys}. "
             f"Available keys: {list(ros_data.keys())}"
         )
-
-
-def register_adapter(cls):
-    """
-    Decorator to register a ROSAdapter in the ROSBridge.
-    """
-    ROSBridge.register_adapter(cls)
-    return cls

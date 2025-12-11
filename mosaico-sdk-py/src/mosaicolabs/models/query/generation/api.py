@@ -8,7 +8,7 @@ from typing import (
 )
 import inspect
 
-from mosaicolabs.models.query.expressions import _QueryExpression
+from ..expressions import _QueryExpression
 from ..protocols import FieldMapperProtocol
 from .mixins import _QueryableUnsupported
 

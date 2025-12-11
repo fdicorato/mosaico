@@ -1,9 +1,8 @@
 import pytest
 from mosaicolabs.comm import MosaicoClient
-from mosaicolabs.models.header import Time
-from mosaicolabs.models.platform.topic import Topic
-from mosaicolabs.models.query import QueryOntologyCatalog
-from mosaicolabs.models.query.builders import QueryTopic, QuerySequence
+from mosaicolabs.models import Time
+from mosaicolabs.models.platform import Topic
+from mosaicolabs.models.query import QueryOntologyCatalog, QueryTopic, QuerySequence
 from mosaicolabs.models.sensors import IMU, Image, GPS
 from testing.integration.config import (
     UPLOADED_GPS_TOPIC,

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Type, get_origin
 
 # Import custom types used in helper methods
-from mosaicolabs.models.header import Time
+from mosaicolabs.models import Time
 from .protocols import QueryableProtocol
 
 # Import the building blocks for expressions and how they are combined

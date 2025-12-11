@@ -13,13 +13,13 @@ This module defines vectors, points, quaternions, and spatial transforms.
 """
 
 from typing import Optional
+import pyarrow as pa
+from pydantic import model_validator
 
 from ..base_model import BaseModel
 from ..covariance_mixin import CovarianceMixin
 from ..serializable import Serializable
 from ..header_mixin import HeaderMixin
-import pyarrow as pa
-from pydantic import model_validator
 
 
 # ---------------------------------------------------------------------------

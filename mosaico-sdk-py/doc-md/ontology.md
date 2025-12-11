@@ -502,8 +502,7 @@ Here is a complete example of defining a custom sensor for environmental monitor
 
 from typing import Optional
 import pyarrow as pa
-from mosaicolabs.models import Serializable
-from mosaicolabs.models import HeaderMixin
+from mosaicolabs.models import Serializable, HeaderMixin
 
 class EnvironmentSensor(Serializable, HeaderMixin):
     """
@@ -546,8 +545,7 @@ class EnvironmentSensor(Serializable, HeaderMixin):
 # and registering the tag in the Serializable factory
 from my_project.custom_ontology import EnvironmentSensor
 
-from mosaicolabs.models import Message, Header
-from mosaicolabs.models import Time
+from mosaicolabs.models import Message, Header, Time
 
 # Instantiate your custom type
 meas = EnvironmentSensor(

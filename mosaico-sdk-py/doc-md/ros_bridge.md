@@ -43,7 +43,7 @@ Users can extend the bridge to support new ROS message types by implementing a c
 
 ```python
 from mosaicolabs.ros_bridge import ROSAdapterBase, register_adapter, ROSMessage
-from mosaicolabs.models.message import Message
+from mosaicolabs.models import Message
 from my_ontology import MyCustomData # Assuming this class exists
 
 @register_adapter
@@ -140,7 +140,7 @@ For code-first workflows, such as integrating with CI/CD or custom automation sc
 
 ```python
 from pathlib import Path
-from mosaicolabs.ros_bridge.injector import RosbagInjector, ROSInjectionConfig, Stores
+from mosaicolabs.ros_bridge import RosbagInjector, ROSInjectionConfig, Stores
 
 def run_injection():
     # Define the Injection Configuration
@@ -212,8 +212,7 @@ For example, create a setup script (e.g., `setup_registry.py`) that runs before 
 
 ```python
 from pathlib import Path
-from rosbags.typesys import Stores
-from mosaicolabs.ros_bridge.registry import ROSTypeRegistry
+from mosaicolabs.ros_bridge import ROSTypeRegistry, Stores
 
 def register_project_messages():
     """
@@ -255,8 +254,7 @@ Once registered, the `RosbagInjector` (and the underlying `ROSLoader`) automatic
 ```python
 # main_injection.py
 import setup_registry  # Runs the registration logic above
-from mosaicolabs.ros_bridge.injector import RosbagInjector, ROSInjectionConfig
-from rosbags.typesys import Stores
+from mosaicolabs.ros_bridge import RosbagInjector, ROSInjectionConfig, Stores
 from pathlib import Path
 
 # Initialize registry

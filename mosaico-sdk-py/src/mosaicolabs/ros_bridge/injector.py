@@ -28,15 +28,6 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple, Type
-
-from mosaicolabs.comm.mosaico_client import MosaicoClient
-from mosaicolabs.handlers.enum import OnErrorPolicy
-from mosaicolabs.handlers.sequence_writer import SequenceWriter
-from mosaicolabs.ros_bridge import ROSAdapterBase
-from mosaicolabs.ros_bridge.loader import LoaderErrorPolicy, ROSLoader
-from mosaicolabs.ros_bridge.registry import ROSTypeRegistry
-from mosaicolabs.ros_bridge.ros_bridge import ROSBridge
-from mosaicolabs.ros_bridge.ros_message import ROSMessage
 from rich.live import Live
 from rich.progress import (
     BarColumn,
@@ -48,6 +39,15 @@ from rich.progress import (
     TimeRemainingColumn,
 )
 from rosbags.typesys import Stores
+
+from mosaicolabs.comm.mosaico_client import MosaicoClient
+from mosaicolabs.enum import OnErrorPolicy
+from mosaicolabs.handlers import SequenceWriter
+
+from .ros_bridge import ROSAdapterBase, ROSBridge
+from .loader import LoaderErrorPolicy, ROSLoader
+from .registry import ROSTypeRegistry
+from .ros_message import ROSMessage
 
 # --- Configuration ---
 

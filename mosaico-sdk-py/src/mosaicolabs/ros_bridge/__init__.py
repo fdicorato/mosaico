@@ -1,16 +1,16 @@
-from .adapters import (
-    IMUAdapter as IMUAdapter,
-    GPSAdapter as GPSAdapter,
-    ImageAdapter as ImageAdapter,
-    CameraInfoAdapter as CameraInfoAdapter,
-    NMEASentenceAdapter as NMEASentenceAdapter,
-    ROIAdapter as ROIAdapter,
-)
 from .adapter_base import ROSAdapterBase as ROSAdapterBase
-from .ros_bridge import ROSBridge as ROSBridge
-from .ros_message import ROSMessage as ROSMessage
+from .registry import ROSTypeRegistry as ROSTypeRegistry
+from .ros_bridge import ROSBridge as ROSBridge, register_adapter as register_adapter
+from .ros_message import ROSMessage as ROSMessage, ROSHeader as ROSHeader
 from .injector import (
     RosbagInjector as RosbagInjector,
     ROSInjectionConfig as ROSInjectionConfig,
     Stores as Stores,
 )
+
+
+# This will register the adapters in the factory
+from . import adapters as adapters
+
+# This will register the data ontology in the mosaico Data Ontology
+from . import data_ontology as data_ontology

@@ -1,8 +1,7 @@
 import pyarrow as pa
 from typing import List
-from mosaicolabs.models.data.geometry import Transform
-from mosaicolabs.models.header_mixin import HeaderMixin
-from mosaicolabs.models.serializable import Serializable
+from mosaicolabs.models.data import Transform
+from mosaicolabs.models import Serializable, HeaderMixin
 
 
 class FrameTransform(Serializable, HeaderMixin):

@@ -18,7 +18,7 @@ import datetime
 import logging as log
 import pyarrow.flight as fl
 from ..enum import FlightAction
-from ..models.query.response import QueryResponseItem
+from ..models.query import QueryResponseItem
 
 # Generic TypeVar allowing _do_action to return the specific subclass requested
 T_DoActionResponse = TypeVar("T_DoActionResponse", bound="_DoActionResponse")

@@ -9,14 +9,13 @@ middleware-level metadata (like recording timestamp_ns).
 
 # --- Python Standard Library Imports ---
 from typing import Any, Dict, Optional, Type, TypeVar
-from mosaicolabs.helpers.helpers import encode_to_dict
-from mosaicolabs.models.header import Header
 from pydantic import PrivateAttr
-from .serializable import Serializable, _SENSOR_REGISTRY
-from .internal.helpers import _fix_empty_dicts
 import pyarrow as pa
 
-# --- Local/Project-Specific Imports ---
+from ..helpers.helpers import encode_to_dict
+from .header import Header
+from .serializable import Serializable, _SENSOR_REGISTRY
+from .internal.helpers import _fix_empty_dicts
 from .base_model import BaseModel
 
 

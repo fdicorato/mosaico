@@ -1,10 +1,10 @@
 # ======================================================================
 # 3. UNIT TESTS
 # ======================================================================
+import pytest
 
-from mosaicolabs.models.platform.sequence import Sequence
-from mosaicolabs.models.platform.topic import Topic
-from mosaicolabs.models.query.builders import QuerySequence, QueryTopic
+from mosaicolabs.models.platform import Sequence, Topic
+from mosaicolabs.models.query import QuerySequence, QueryTopic, Query
 from mosaicolabs.models.query.generation.mixins import (
     _DynamicFieldFactoryMixin,
     _QueryableDynamicValue,
@@ -13,8 +13,6 @@ from mosaicolabs.models.query.expressions import (
     _QueryTopicExpression,
     _QuerySequenceExpression,
 )
-from mosaicolabs.models.query import Query
-import pytest
 
 
 class TestQueryTopicMetadataAPI:

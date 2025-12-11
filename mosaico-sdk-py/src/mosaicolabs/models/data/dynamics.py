@@ -6,13 +6,13 @@ These can be assigned to Message.data field to send data to the platform.
 """
 
 from typing import Optional
+import pyarrow as pa
+from pydantic import model_validator
 
 from ..covariance_mixin import CovarianceMixin
 from ..serializable import Serializable
 from ..header_mixin import HeaderMixin
 from .geometry import Vector3d
-import pyarrow as pa
-from pydantic import model_validator
 
 
 class ForceTorque(

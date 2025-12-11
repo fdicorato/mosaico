@@ -1,8 +1,8 @@
 import pytest
 import logging as log
 
-from mosaicolabs.handlers.enum import OnErrorPolicy
-from mosaicolabs.models.sensors.imu import IMU
+from mosaicolabs.enum import OnErrorPolicy
+from mosaicolabs.models.sensors import IMU
 from mosaicolabs.comm import MosaicoClient
 
 

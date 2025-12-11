@@ -2,10 +2,15 @@
 # 3. UNIT TESTS
 # ======================================================================
 
-from mosaicolabs.models.data.dynamics import ForceTorque
-from mosaicolabs.models.data.geometry import Pose, Transform
-from mosaicolabs.models.data.kinematics import Acceleration, MotionState, Velocity
-from mosaicolabs.models.data.roi import ROI
+from mosaicolabs.models.data import (
+    ForceTorque,
+    Pose,
+    Transform,
+    Acceleration,
+    MotionState,
+    Velocity,
+    ROI,
+)
 from mosaicolabs.models.query.generation.mixins import (
     _QueryableNumeric,
     _QueryableString,

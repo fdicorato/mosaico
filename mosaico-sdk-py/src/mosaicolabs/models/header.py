@@ -11,9 +11,9 @@ from typing import Optional
 import math
 import time
 from pydantic import field_validator
+import pyarrow as pa
 from datetime import datetime, timezone
 
-import pyarrow as pa
 from .base_model import BaseModel
 
 

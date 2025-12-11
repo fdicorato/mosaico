@@ -6,9 +6,10 @@ header fields into ontology models via composition.
 """
 
 from typing import Optional
+import pyarrow as pa
+
 from .base_model import BaseModel
 from .header import Header
-import pyarrow as pa
 
 
 class HeaderMixin(BaseModel):

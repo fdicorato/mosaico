@@ -3,18 +3,13 @@ from pathlib import Path
 from rosbags.highlevel import AnyReader
 from rosbags.interfaces import Connection, TopicInfo
 from typing import Dict, Generator, List, Optional, Tuple, Union
+from enum import Enum
 import logging as log
 from rosbags.typesys import Stores, get_typestore
 
 from .helpers import _to_dict
-
-# Attempt to import the registry from the optional package
 from .ros_bridge import ROSMessage
 from .registry import ROSTypeRegistry
-# Helper function from previous examples (for reference
-
-
-from enum import Enum
 
 
 class LoaderErrorPolicy(Enum):

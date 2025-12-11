@@ -1,7 +1,7 @@
 from typing import Dict, Generic, Optional, Type, Any, TypeVar
 
-from mosaicolabs.models.message import Message
-from ..models.sensors import Serializable
+from mosaicolabs.models import Message, Serializable
+
 from .adapter_base import ROSAdapterBase
 from .ros_message import ROSMessage
 
@@ -69,3 +69,11 @@ class ROSBridge(Generic[T]):
 
         # Delegate the translation to the specific adapter
         return adapter_class.translate(ros_msg, **kwargs)
+
+
+def register_adapter(cls):
+    """
+    Decorator to register a ROSAdapter in the ROSBridge.
+    """
+    ROSBridge.register_adapter(cls)
+    return cls

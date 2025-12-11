@@ -1,7 +1,6 @@
 from typing import List, Optional
 import pyarrow as pa
-from mosaicolabs.models.serializable import Serializable
-from mosaicolabs.models.header_mixin import HeaderMixin
+from mosaicolabs.models import Serializable, HeaderMixin
 
 
 class BatteryState(Serializable, HeaderMixin):

@@ -9,11 +9,10 @@ and lens distortion model.
 """
 
 from typing import Optional
-from mosaicolabs.models.header_mixin import HeaderMixin
-from mosaicolabs.models.data.roi import ROI
 import pyarrow as pa
 
-from ..data import Vector2d
+from ..header_mixin import HeaderMixin
+from ..data import ROI, Vector2d
 from ..serializable import Serializable
 
 

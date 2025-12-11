@@ -4,7 +4,10 @@ from typing import List, Tuple
 import logging as log
 
 # Import your classes (adjust the import path to match your project structure)
-from mosaicolabs.models.sensors.image import Image, ImageFormat, _IMG_ENCODING_MAP
+from mosaicolabs.models.sensors import Image, ImageFormat
+
+# import private (not exported) variable for testing purposes
+from mosaicolabs.models.sensors.image import _IMG_ENCODING_MAP
 
 
 def generate_test_data(

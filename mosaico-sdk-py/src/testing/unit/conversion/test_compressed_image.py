@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image as PILImage
 
 # Import your classes
-from mosaicolabs.models.sensors.image import CompressedImage, ImageFormat
+from mosaicolabs.models.sensors import CompressedImage, ImageFormat
 
 
 # Helper to create a dummy image

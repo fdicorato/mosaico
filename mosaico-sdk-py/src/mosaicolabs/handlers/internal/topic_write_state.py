@@ -18,7 +18,7 @@ import logging as log
 from concurrent.futures import ThreadPoolExecutor, Future, wait
 from threading import BoundedSemaphore, Lock
 
-from mosaicolabs.models.sensors import Serializable
+from mosaicolabs.models import Serializable
 from mosaicolabs.enum import SerializationFormat
 from ...comm.connection import PYARROW_OUT_OF_RANGE_BYTES
 

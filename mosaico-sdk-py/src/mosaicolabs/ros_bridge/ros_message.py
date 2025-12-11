@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
-from mosaicolabs.models.header import Header, Time
+from mosaicolabs.models import Header, Time
 
 
 def _validate_header_fields(ros_hdata: dict):

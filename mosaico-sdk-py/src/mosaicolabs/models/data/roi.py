@@ -2,8 +2,8 @@ import pyarrow as pa
 from typing import Optional
 
 from ..serializable import Serializable
-from .geometry import Vector2d
 from ..header_mixin import HeaderMixin
+from .geometry import Vector2d
 
 
 class ROI(Serializable, HeaderMixin):

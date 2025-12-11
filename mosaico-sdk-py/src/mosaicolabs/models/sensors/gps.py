@@ -9,7 +9,7 @@ It includes Status flags, processed Fixes (Position/Velocity), and raw NMEA stri
 from typing import Optional
 import pyarrow as pa
 
-from ..data.geometry import Point3d, Vector3d
+from ..data import Point3d, Vector3d
 from ..header_mixin import HeaderMixin
 from ..serializable import Serializable
 

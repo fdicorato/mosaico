@@ -3,14 +3,9 @@ import itertools
 import random
 from typing import Iterable
 
-from mosaicolabs.models.data import Point3d
-from mosaicolabs.models.data.geometry import Vector3d
-from mosaicolabs.models.sensors import IMU
-from mosaicolabs.models.header import Header, Time
-from mosaicolabs.models.message import Message
-from mosaicolabs.models.sensors.gps import GPS, GPSStatus
-from mosaicolabs.models.sensors.magnetometer import Magnetometer
-from mosaicolabs.models.serializable import Serializable
+from mosaicolabs.models.data import Point3d, Vector3d
+from mosaicolabs.models.sensors import IMU, GPS, GPSStatus, Magnetometer
+from mosaicolabs.models import Serializable, Message, Header, Time
 from testing.integration.config import (
     UPLOADED_GPS_FRAME_ID,
     UPLOADED_GPS_METADATA,

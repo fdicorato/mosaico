@@ -17,7 +17,7 @@ Architecture:
 """
 
 from typing import Any, Dict, Optional, Type, Tuple
-from mosaicolabs.models.data.base_types import (
+from mosaicolabs.models.data import (
     Floating32,
     Floating64,
     Integer64,
@@ -31,11 +31,12 @@ from mosaicolabs.models.data.base_types import (
     Unsigned64,
     Unsigned8,
 )
-from mosaicolabs.models.message import Message
-from mosaicolabs.models.serializable import Serializable
-from mosaicolabs.ros_bridge.adapter_base import ROSAdapterBase
-from mosaicolabs.ros_bridge.adapters.helpers import register_adapter, _validate_msgdata
-from mosaicolabs.ros_bridge.ros_message import ROSMessage, ROSHeader
+from mosaicolabs.models import Message, Serializable
+
+from ..adapter_base import ROSAdapterBase
+from ..ros_message import ROSMessage, ROSHeader
+from ..ros_bridge import register_adapter
+from .helpers import _validate_msgdata
 
 # ---------------------------------------------------------------------------
 # Type Mapping Configuration

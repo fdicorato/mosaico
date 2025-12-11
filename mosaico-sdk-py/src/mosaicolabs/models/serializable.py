@@ -12,21 +12,17 @@ It implements a **Registry/Factory Pattern**:
 3.  **Query Capability**: It injects query proxies allowing users to write `IMU.Q.acc_x > 0`.
 """
 
-# --- Python Standard Library Imports ---
 from typing import Optional, Type, Dict, List, ClassVar
 import pyarrow as pa
 
-# --- Local/Project-Specific Imports ---
 from mosaicolabs.enum import SerializationFormat
 from mosaicolabs.helpers import camel_to_snake
 
-# Import the Pydantic BaseModel, which Serializable will inherit from
 from .base_model import BaseModel
 
-# Import the query generation components
 from .query.generation.api import _QueryableModel
-from .internal.pyarrow_mapper import PyarrowFieldMapper
 from .query.expressions import _QueryCatalogExpression
+from .internal.pyarrow_mapper import PyarrowFieldMapper
 from .internal.helpers import _fix_empty_dicts
 
 

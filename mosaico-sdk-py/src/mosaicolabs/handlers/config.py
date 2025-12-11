@@ -6,7 +6,7 @@ of the writing process, including error handling policies and batching limits.
 """
 
 from dataclasses import dataclass
-from .enum import OnErrorPolicy
+from ..enum import OnErrorPolicy
 
 
 @dataclass

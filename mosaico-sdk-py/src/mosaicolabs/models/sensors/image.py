@@ -16,16 +16,16 @@ import io
 import sys
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-# Optional dependencies for video handling
+# dependencies for video handling
 import av
-
-from ..header import Header
-from ..header_mixin import HeaderMixin
 import numpy as np
 import pyarrow as pa
 from PIL import Image as PILImage
 
 from mosaicolabs.enum import SerializationFormat
+
+from ..header import Header
+from ..header_mixin import HeaderMixin
 from ..serializable import Serializable
 
 

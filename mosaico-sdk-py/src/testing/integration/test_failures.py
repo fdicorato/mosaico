@@ -4,8 +4,8 @@ These tests require the connection to the server (localhost)
 
 import pytest
 import logging as log
-from mosaicolabs.comm.mosaico_client import MosaicoClient
-from mosaicolabs.handlers.enum import SequenceStatus
+from mosaicolabs.comm import MosaicoClient
+from mosaicolabs.enum import SequenceStatus
 
 
 def test_invalid_host():

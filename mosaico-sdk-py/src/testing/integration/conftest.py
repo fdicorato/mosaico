@@ -1,7 +1,7 @@
 from typing import List
 import pytest
 import logging as log
-from mosaicolabs.comm.mosaico_client import MosaicoClient
+from mosaicolabs.comm import MosaicoClient
 from testing.integration.helpers import (
     DataStreamItem,
     topic_to_maker_factory,

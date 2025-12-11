@@ -5,8 +5,6 @@ from .builders import (
     Query as Query,
 )
 
-from .protocols import QueryableProtocol as QueryableProtocol
-
 from .response import (
     QueryResponseItem as QueryResponseItem,
 )

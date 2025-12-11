@@ -1,6 +1,5 @@
 from typing import Optional
-from mosaicolabs.handlers.topic_handler import Topic
-from mosaicolabs.models.platform.sequence import Sequence
+from mosaicolabs.models.platform import Sequence, Topic
 from mosaicolabs.models.query.expressions import _QueryExpression
 from mosaicolabs.models.query.generation.mixins import (
     _QueryableComparable,
@@ -10,7 +9,7 @@ from mosaicolabs.models.query.generation.mixins import (
     _QueryableDynamicValue,
     _QueryableField,
 )
-from mosaicolabs.models.query.builders import (
+from mosaicolabs.models.query import (
     QueryOntologyCatalog,
     QuerySequence,
     QueryTopic,

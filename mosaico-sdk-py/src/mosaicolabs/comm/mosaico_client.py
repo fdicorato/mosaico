@@ -7,26 +7,20 @@ resource pooling (connections and executors), and serves as a factory for
 creating resource handlers (sequences, topics) and executing queries.
 """
 
-# --- Python Standard Library Imports ---
 import os
 from typing import Any, Dict, List, Optional, Type
 import logging as log
-
-# --- Third-Party Imports ---
-from mosaicolabs.models.query.builders import Query
-from mosaicolabs.models.query.response import QueryResponseItem
 import pyarrow.flight as fl
 
-# --- Local/Project-Specific Imports ---
+from mosaicolabs.models.query import Query, QueryResponseItem
+from mosaicolabs.models.query.protocols import QueryableProtocol
+
 from ..helpers import pack_topic_resource_name
-from ..handlers.topic_handler import TopicHandler
-from ..handlers.sequence_handler import SequenceHandler
-from ..handlers.sequence_writer import SequenceWriter, OnErrorPolicy
-from mosaicolabs.models.query import QueryableProtocol
+from ..handlers import TopicHandler, SequenceHandler, SequenceWriter
 from .connection import _get_connection, _ConnectionStatus, _ConnectionPool
 from .executor_pool import _ExecutorPool
 from .do_action import _do_action, _DoActionQueryResponse
-from ..enum import FlightAction
+from ..enum import FlightAction, OnErrorPolicy
 from ..handlers.config import WriterConfig
 from .connection import (
     DEFAULT_MAX_BATCH_BYTES,

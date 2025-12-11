@@ -1,13 +1,13 @@
 from typing import Any, Optional, Tuple, Type
-from mosaicolabs.models.sensors.robot import RobotJoint
-from mosaicolabs.ros_bridge.adapter_base import ROSAdapterBase
-from mosaicolabs.ros_bridge.adapters.helpers import (
-    _make_header,
-    register_adapter,
-    _validate_msgdata,
-)
-from mosaicolabs.ros_bridge.ros_message import ROSMessage
-from mosaicolabs.models.message import Message
+
+from mosaicolabs.models import Message
+from mosaicolabs.models.sensors import RobotJoint
+
+from ..adapter_base import ROSAdapterBase
+from ..ros_bridge import register_adapter
+from ..ros_message import ROSMessage
+
+from .helpers import _make_header, _validate_msgdata
 
 
 @register_adapter

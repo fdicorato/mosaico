@@ -14,8 +14,8 @@ timestamped, traceable message.
 from typing import Any
 import pyarrow as pa
 
-from mosaicolabs.models.header_mixin import HeaderMixin
-from mosaicolabs.models.serializable import Serializable
+from ..serializable import Serializable
+from ..header_mixin import HeaderMixin
 
 
 class Integer8(Serializable, HeaderMixin):

@@ -1,24 +1,24 @@
 # ======================================================================
 # 3. UNIT TESTS
 # ======================================================================
+import pytest
 
-from mosaicolabs.models.query.builders import (
+from mosaicolabs.models.query import (
     Query,
     QueryOntologyCatalog,
 )
+
 from mosaicolabs.models.query.generation.mixins import (
     _QueryableNumeric,
     _QueryableString,
     _QueryableBool,
 )
-from mosaicolabs.models.sensors import IMU
+
 from mosaicolabs.models.query.expressions import (
     _QueryCatalogExpression,
 )
-from mosaicolabs.models.sensors.gps import GPS
-from mosaicolabs.models.sensors.image import Image
-from mosaicolabs.models.sensors.magnetometer import Magnetometer
-import pytest
+
+from mosaicolabs.models.sensors import IMU, GPS, Image, Magnetometer
 
 
 class TestQueryIMUAPI:

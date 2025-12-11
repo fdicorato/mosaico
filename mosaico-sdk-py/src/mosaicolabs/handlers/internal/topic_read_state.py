@@ -11,7 +11,7 @@ import pyarrow.flight as fl
 from typing import Iterator, List, Optional, Type
 import logging as log
 
-from mosaicolabs.models.sensors import Serializable
+from mosaicolabs.models import Serializable
 
 
 class _TopicReadState:

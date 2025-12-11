@@ -7,12 +7,11 @@ It aggregates data from accelerometers and gyroscopes.
 """
 
 from typing import Optional
-
-from ..header_mixin import HeaderMixin
 import pyarrow as pa
 
+from ..header_mixin import HeaderMixin
 from ..serializable import Serializable
-from ..data.geometry import Quaternion, Vector3d
+from ..data import Quaternion, Vector3d
 
 
 class IMU(Serializable, HeaderMixin):

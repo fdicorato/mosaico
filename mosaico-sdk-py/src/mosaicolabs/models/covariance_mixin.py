@@ -5,8 +5,9 @@ Similar to `HeaderMixin`, this module injects covariance fields into ontology mo
 """
 
 from typing import List, Optional
-from .base_model import BaseModel
 import pyarrow as pa
+
+from .base_model import BaseModel
 
 
 class CovarianceMixin(BaseModel):

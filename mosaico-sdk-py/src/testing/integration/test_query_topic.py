@@ -1,8 +1,7 @@
 from mosaicolabs.comm import MosaicoClient
-from mosaicolabs.models.header import Time
-from mosaicolabs.models.platform.topic import Topic
-from mosaicolabs.models.query import QuerySequence
-from mosaicolabs.models.query.builders import QueryTopic
+from mosaicolabs.models import Time
+from mosaicolabs.models.platform import Topic
+from mosaicolabs.models.query import QuerySequence, QueryTopic
 import pytest
 from testing.integration.config import (
     UPLOADED_IMU_CAMERA_TOPIC,

@@ -1,7 +1,3 @@
-from .enum import (
-    OnErrorPolicy as OnErrorPolicy,
-    SequenceStatus as SequenceStatus,
-)
 from .topic_reader import TopicDataStreamer as TopicDataStreamer
 from .topic_writer import TopicWriter as TopicWriter
 from .topic_handler import TopicHandler as TopicHandler

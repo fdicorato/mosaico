@@ -10,15 +10,14 @@ import logging as log
 from typing import Any, Dict, Type, Optional
 import pyarrow.flight as fl
 
-from mosaicolabs.models.sensors import Serializable
+from mosaicolabs.models import Serializable
 from .topic_writer import TopicWriter
-from .enum import OnErrorPolicy, SequenceStatus
 from .helpers import _make_exception, _validate_sequence_name
 from ..helpers import pack_topic_resource_name
 from ..comm.do_action import _do_action, _DoActionResponseKey
 from ..comm.connection import _ConnectionPool
 from ..comm.executor_pool import _ExecutorPool
-from ..enum import FlightAction
+from ..enum import FlightAction, OnErrorPolicy, SequenceStatus
 from .config import WriterConfig
 
 

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 # Import your Time class (adjust import as needed)
 # Assuming it is in a file named time_module.py or similar
-from mosaicolabs.models.header import Time
+from mosaicolabs.models import Time
 
 # -----------------------------------------------------------------------------
 # Factory Method Tests

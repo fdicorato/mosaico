@@ -168,9 +168,9 @@ Queries are executed via the `MosaicoClient` object. The `.query()` method accep
 *Example: Retrieve data where the GPS service is equal to a certain vaue (generally an enum-based) (`==1`), restricted to topics tagged with the "UART" interface*
 
 ```python
-from mosaicolabs.models.query.builders import QueryOntologyCatalog, QueryTopic
-from mosaicolabs.models.platform.topic import Topic
-from mosaicolabs.models.sensors.gps import GPS
+from mosaicolabs.models.query import QueryOntologyCatalog, QueryTopic
+from mosaicolabs.models.platform import Topic
+from mosaicolabs.models.sensors import GPS
 
 # Execute the query
 query_resp = client.query(
@@ -196,7 +196,7 @@ for item in query_resp:
 
 ```python
 from mosaicolabs.models.query.builders import QueryOntologyCatalog, QuerySequence
-from mosaicolabs.models.sensors.imu import IMU
+from mosaicolabs.models.sensors import IMU
 
 results = client.query(
     # Filter 1: Sequence Name -> Use Convenience Method

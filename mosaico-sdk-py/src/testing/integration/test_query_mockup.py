@@ -1,6 +1,6 @@
 from mosaicolabs.comm import MosaicoClient
-from mosaicolabs.models.platform.sequence import Sequence
-from mosaicolabs.models.query.builders import QuerySequence
+from mosaicolabs.models.platform import Sequence
+from mosaicolabs.models.query import QuerySequence
 import pytest
 from testing.integration.config import (
     QUERY_SEQUENCES_MOCKUP,

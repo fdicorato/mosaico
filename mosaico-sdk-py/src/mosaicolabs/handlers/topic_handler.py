@@ -83,13 +83,16 @@ class TopicHandler:
 
         # Extract the Ticket for this specific topic
         ticket: Optional[fl.Ticket] = None
+        ep_ticket_data = None
         for ep in flight_info.endpoints:
             ep_ticket_data = _parse_ep_ticket(ep.ticket)
             if ep_ticket_data and ep_ticket_data[1] == topic_name:
                 ticket = ep.ticket
                 break
 
-        if ticket is None:
+        if (
+            ticket is None or ep_ticket_data is None
+        ):  # Not necessary, but corrects pylance complains
             log.error(
                 f"Unable to init handler for topic {topic_name} in sequence {sequence_name}"
             )

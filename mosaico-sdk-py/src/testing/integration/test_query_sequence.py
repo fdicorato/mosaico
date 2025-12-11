@@ -1,7 +1,7 @@
 from mosaicolabs.comm import MosaicoClient
-from mosaicolabs.models.header import Time
-from mosaicolabs.models.platform.sequence import Sequence
-from mosaicolabs.models.query.builders import QuerySequence
+from mosaicolabs.models import Time
+from mosaicolabs.models.platform import Sequence
+from mosaicolabs.models.query import QuerySequence
 from testing.integration.config import (
     UPLOADED_SEQUENCE_NAME,
 )

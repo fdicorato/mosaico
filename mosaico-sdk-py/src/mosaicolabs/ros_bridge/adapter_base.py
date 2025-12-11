@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Generic, Optional, Tuple, Type, Any, TypeVar
 
 from mosaicolabs.models.message import Message
+
 from .ros_message import ROSMessage
-from ..models.sensors import Serializable
+from ..models import Serializable
 
 T = TypeVar("T", bound=Serializable)
 
