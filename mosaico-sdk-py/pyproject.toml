@@ -21,8 +21,6 @@ opencv-python = "^4.12.0.88"
 av = "^16.0.1"
 
 [tool.poetry.group.dev.dependencies]
-pyqt5 = "^5.15.11"
-pyqt5-qt5 = "^5.15.17"
 pytest = ">=8.4.2"
 
 
@@ -35,5 +33,5 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-"mosaicolabs.ros_injector" = "mosaicolabs.ros_bridge.injector:ros_injector"
-"mosaicolabs.testing" = "testing.testing:mosaico_testing"
+"mosaico.ros_injector" = "mosaicolabs.ros_bridge.injector:ros_injector"
+"mosaico.testing" = "testing.testing:mosaico_testing"
