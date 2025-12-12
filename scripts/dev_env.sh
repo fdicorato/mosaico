@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-# This script runs the testing suite of Mosaico (unit + integration tests)
+# Run a development enviroment DB + mosaicod for local testing
 
 
-# Output file for the mosaicod background process
-MOSAICOD_OUTPUT="/tmp/mosaicod_e2e_testing.out"
 # Directory contianing the source code for the SDK
 PYTHON_SDK_DIR="mosaico-sdk-py"
 # Directory containing the mosaicod source code
@@ -12,15 +10,11 @@ MOSAICOD_DIR="mosaicod"
 # Directory containing the docker compose.yml file for setup the test infra
 DOCKER_DIR="docker/testing"
 # This directory will be used to configure mosaicod store and will be deleted at the end of the process
-TEST_DIRECTORY="/tmp/__mosaico_auto_testing__"
+TEST_DIRECTORY="/tmp/__mosaico_dev_env__"
 # Log level for mosaicod
 RUST_LOG=mosaico=trace
 # Database URL (see docker compose if you need to change the params)
 MOSAICO_REPOSITORY_DB_URL="postgresql://postgres:password@localhost:6543/mosaico"
-# USefull for rust crashes
-RUST_BACKTRACE=1
-# Set colored output 
-TERM=xterm-256color
 
 # This flag should be always `true`, otherwise a running database with live migration
 # is required to compile the code (and also we need to reinstall sqlx at each run).
@@ -38,7 +32,6 @@ export RUST_LOG
 export SQLX_OFFLINE
 export MOSAICO_REPOSITORY_DB_URL
 export RUST_BACKTRACE
-export TERM
 
 
 COLS=$(tput cols || echo 80 )
@@ -99,7 +92,7 @@ trap cleanup EXIT
 mkdir -p "${TEST_DIRECTORY}"
 
 
-title "running test suite" "#" ${GREEN}
+title "development environment" "#" ${GREEN}
 
 title "setup" "-"
 echo "MOSAICO_REPOSITORY_DB_URL ${MOSAICO_REPOSITORY_DB_URL}"
@@ -109,30 +102,13 @@ cd ${DOCKER_PATH}
 title "docker" "." ${BLUE}
 docker compose up -d --wait 2> /dev/null
 echo "Started ${BOLD}docker/testing${RESET} compose file"
-cd ${PYTHON_SDK_PATH}
-title "poetry" "." ${BLUE}
-poetry install
 
-
-title "mosaicod (unit tests)" "-"
+title "mosaicod" "-"
 cd ${MOSAICOD_PATH}
-cargo test
-
-title "python sdk (unit tests)" "-"
-cd ${PYTHON_SDK_PATH}
-poetry run pytest ./src/testing -k unit
-
-title "integration tests" "-"
-cd ${MOSAICOD_PATH}
-title "mosaicod build" "." ${BLUE}
+title "build" "." ${BLUE}
 cargo build
-./target/debug/mosaicod run --port 6276 --local-store "${TEST_DIRECTORY}" > "${MOSAICOD_OUTPUT}" 2>&1 &
+./target/debug/mosaicod run --port 6276 --local-store "${TEST_DIRECTORY}"
 MOSAICOD_PID=$!
-title "mosaicod startup" "." ${BLUE}
-echo "starting mosaicod as background service (pid ${MOSAICOD_PID}), output can be found in ${BOLD}${MOSAICOD_OUTPUT}${RESET}"
-cd ${PYTHON_SDK_PATH}
-title "running integration tests" "." ${BLUE}
-poetry run pytest ./src/testing -k integration
 
-title "all done" "#" ${GREEN}
+title "done" "#" ${GREEN}
 
