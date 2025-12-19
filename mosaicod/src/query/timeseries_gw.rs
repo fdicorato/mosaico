@@ -6,7 +6,6 @@
 //! paths and access data sources like Parquet files efficiently.
 use log::trace;
 
-use crate::traits::AsExtension;
 use crate::{params, query, rw, store};
 use arrow::datatypes::{Schema, SchemaRef};
 use datafusion::datasource::file_format::parquet::ParquetFormat;
@@ -46,20 +45,20 @@ impl TimeseriesGw {
     ///
     /// All files in the provided path will be included in the read.
     ///
-    /// If `repartition` is `True` the system will compute the number of elements to include
-    /// in each message based on the maximum allowed message size.
+    /// If `batch_size` is provided, the system will use it to configure the batch size
+    /// for the query engine. This allows callers to control message sizes based on
+    /// pre-computed statistics from the database.
     pub async fn read(
         &self,
         path: impl AsRef<Path>,
         format: rw::Format,
-        repartition: bool,
+        batch_size: Option<usize>,
     ) -> Result<TimeseriesGwResult, Error> {
         let listing_options = get_listing_options(format);
 
         let mut conf = SessionConfig::new();
-        if repartition {
-            let optimal_batch_size = self.optimal_batch_size(&path, format).await?;
-            conf = conf.with_batch_size(optimal_batch_size);
+        if let Some(batch_size) = batch_size {
+            conf = conf.with_batch_size(batch_size);
         }
 
         let ctx = SessionContext::new_with_config_rt(conf, self.runtime.clone());
@@ -84,36 +83,6 @@ impl TimeseriesGw {
         Ok(TimeseriesGwResult { data_frame: df })
     }
 
-    async fn optimal_batch_size(
-        &self,
-        path: impl AsRef<Path>,
-        format: rw::Format,
-    ) -> Result<usize, Error> {
-        let datafiles = self.store.list(&path, Some(&format.as_extension())).await?;
-        let mut total_size = 0;
-        for file in &datafiles {
-            total_size += self.store.size(file).await?;
-        }
-
-        // Compute the number of rows in the datafile
-        let listing_options = get_listing_options(format);
-        let ctx = SessionContext::new_with_config_rt(SessionConfig::new(), self.runtime.clone());
-        ctx.register_listing_table(
-            "data",
-            self.datafile_url(path)?,
-            listing_options,
-            None,
-            None,
-        )
-        .await?;
-        let df = ctx.sql("SELECT * FROM data").await?;
-        let count = df.count().await?;
-
-        let target_size = params::configurables().target_message_size_in_bytes;
-
-        Ok((target_size * count) / total_size)
-    }
-
     fn datafile_url(&self, path: impl AsRef<Path>) -> Result<url::Url, Error> {
         Ok(self
             .store
@@ -135,8 +104,11 @@ impl TimeseriesGwResult {
         ))
     }
 
-    pub fn filter(self, filter: query::OntologyFilter) -> Result<Self, Error> {
-        let expr = ontology_filter_to_df_expr(filter);
+    pub fn filter<V>(self, filter: query::ExprGroup<V>) -> Result<Self, Error>
+    where
+        V: Into<query::Value>,
+    {
+        let expr = expr_group_to_df_expr(filter);
 
         let data_frame = if let Some(expr) = expr {
             trace!("filter expression: {}", expr);
@@ -155,6 +127,15 @@ impl TimeseriesGwResult {
     pub async fn count(self) -> Result<usize, Error> {
         Ok(self.data_frame.count().await?)
     }
+
+    /// Checks if there are any rows matching the current query.
+    /// This is more efficient than `count()` when you only need to know if results exist,
+    /// as it stops after finding the first matching row.
+    pub async fn has_rows(self) -> Result<bool, Error> {
+        // Limit to 1 row for early termination - avoids full scan
+        let limited = self.data_frame.limit(0, Some(1))?;
+        Ok(limited.count().await? > 0)
+    }
 }
 
 fn get_listing_options(_format: rw::Format) -> ListingOptions {
@@ -171,31 +152,38 @@ fn unfold_field(field: &query::OntologyField) -> Expr {
     col
 }
 
-fn ontology_filter_to_df_expr(filter: query::OntologyFilter) -> Option<Expr> {
+fn expr_group_to_df_expr<V>(filter: query::ExprGroup<V>) -> Option<Expr>
+where
+    V: Into<query::Value>,
+{
     let mut ret: Option<Expr> = None;
 
-    for (field, op) in filter.into_iterator() {
+    for expr in filter.into_iter() {
+        let (field, op) = expr.into_parts();
         let expr = match op {
-            query::Op::Eq(v) => Some(unfold_field(&field).eq(value_to_df_expr(v))),
-            query::Op::Neq(v) => Some(unfold_field(&field).not_eq(value_to_df_expr(v))),
-            query::Op::Leq(v) => Some(unfold_field(&field).lt_eq(value_to_df_expr(v))),
-            query::Op::Geq(v) => Some(unfold_field(&field).gt_eq(value_to_df_expr(v))),
-            query::Op::Lt(v) => Some(unfold_field(&field).lt(value_to_df_expr(v))),
-            query::Op::Gt(v) => Some(unfold_field(&field).gt(value_to_df_expr(v))),
+            query::Op::Eq(v) => Some(unfold_field(&field).eq(value_to_df_expr(v.into()))),
+            query::Op::Neq(v) => Some(unfold_field(&field).not_eq(value_to_df_expr(v.into()))),
+            query::Op::Leq(v) => Some(unfold_field(&field).lt_eq(value_to_df_expr(v.into()))),
+            query::Op::Geq(v) => Some(unfold_field(&field).gt_eq(value_to_df_expr(v.into()))),
+            query::Op::Lt(v) => Some(unfold_field(&field).lt(value_to_df_expr(v.into()))),
+            query::Op::Gt(v) => Some(unfold_field(&field).gt(value_to_df_expr(v.into()))),
             query::Op::Ex => None,  // no-op
             query::Op::Nex => None, // no-op
             query::Op::Between(range) => {
-                let vmin: query::Value = range.min;
-                let vmax: query::Value = range.max;
+                let vmin: query::Value = range.min.into();
+                let vmax: query::Value = range.max.into();
                 let emin = unfold_field(&field).lt_eq(value_to_df_expr(vmax));
                 let emax = unfold_field(&field).gt_eq(value_to_df_expr(vmin));
                 Some(emin.and(emax))
             }
             query::Op::In(items) => {
-                let list = items.into_iter().map(value_to_df_expr).collect();
+                let list = items
+                    .into_iter()
+                    .map(|v| value_to_df_expr(v.into()))
+                    .collect();
                 Some(unfold_field(&field).in_list(list, false))
             }
-            query::Op::Match(v) => Some(unfold_field(&field).like(value_to_df_expr(v))),
+            query::Op::Match(v) => Some(unfold_field(&field).like(value_to_df_expr(v.into()))),
         };
 
         if let Some(expr) = expr {

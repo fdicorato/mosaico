@@ -1,0 +1,3 @@
+[alias]
+lint = "clippy --no-deps --all-targets --all-features -- -D warnings"
+format = "fmt"

@@ -208,16 +208,27 @@ def test_mixed_query_no_return(
     _client.close()
 
 
-def test_fail_query_multi_tag_ontology(
+def test_query_multi_tag_ontology(
     _client: MosaicoClient,
+    _inject_sequence_data_stream,  # Ensure the data are available on the data platform
 ):
     # Query by multiple condition: time and value
-    with pytest.raises(NotImplementedError, match="single ontology tag per query"):
-        _client.query(
-            QueryOntologyCatalog()
-            .with_expression(IMU.Q.header.stamp.sec.eq(0))
-            .with_expression(Image.Q.format.eq("png"))
-        )
+    query_resp = _client.query(
+        QueryOntologyCatalog()
+        .with_expression(IMU.Q.header.stamp.sec.gt(0))
+        .with_expression(GPS.Q.status.service.geq(1))
+    )
+
+    assert query_resp is not None
+
+    # Check sequence
+    assert len(query_resp) == 1
+
+    for item in query_resp.items:
+        assert UPLOADED_GPS_TOPIC in item.topics
+        assert UPLOADED_IMU_CAMERA_TOPIC in item.topics
+        assert UPLOADED_IMU_FRONT_TOPIC in item.topics
+        assert len(item.topics) == 3
 
     # free resources
     _client.close()

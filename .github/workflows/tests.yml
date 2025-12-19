@@ -39,7 +39,7 @@ jobs:
       - name: mosaicod Linter
         run: |
           cd mosaicod
-          cargo clippy --no-deps --all-targets --all-features -- -D warnings
+          cargo lint
 
       - name: Install System Deps
         run: |

@@ -218,21 +218,42 @@ pub fn stats_from_arrow_field(field: &Field) -> types::Stats {
     }
 }
 
+/// Inspects an array and updates the provided statistics using SIMD-optimized Arrow compute kernels.
 pub fn stats_inspect_array(stats: &mut types::Stats, array: &ArrayRef) -> Result<(), ArrowError> {
+    use arrow::array::Array;
+    use arrow::compute;
     use types::Stats;
 
     match stats {
         Stats::Numeric(stats) => {
             let narray = cast_array_to_numeric(array)?;
-            for val in narray.as_primitive::<arrow::datatypes::Float64Type>() {
-                stats.eval(&val);
-            }
+            let primitive = narray.as_primitive::<arrow::datatypes::Float64Type>();
+
+            // Use SIMD-optimized min/max from Arrow compute
+            let min_val = compute::min(primitive);
+            let max_val = compute::max(primitive);
+
+            // Check for nulls (O(1) - Arrow tracks this in metadata)
+            let has_null = primitive.null_count() > 0;
+
+            // Check for NaN values - Arrow's min/max excludes NaN, so we check separately
+            // This is still efficient: single pass, branch-prediction friendly
+            let has_nan = primitive.values().iter().any(|v| v.is_nan());
+
+            stats.merge(min_val, max_val, has_null, has_nan);
         }
         Stats::Text(stats) => {
             let sarray = cast_array_to_literal(array)?;
-            for val in sarray.as_string::<i32>() {
-                stats.eval(&val);
-            }
+            let string_array = sarray.as_string::<i32>();
+
+            // Use SIMD-optimized min/max from Arrow compute
+            let min_val = compute::min_string(string_array);
+            let max_val = compute::max_string(string_array);
+
+            // Check for nulls (O(1))
+            let has_null = string_array.null_count() > 0;
+
+            stats.merge(min_val, max_val, has_null);
         }
         Stats::Unsupported => { /* do nothing */ }
     }
@@ -343,7 +364,7 @@ mod tests {
         let flattened_names: Vec<String> =
             schema_ref.squashed_iter().map(|(name, _)| name).collect();
 
-        assert_eq!(flattened_names, vec!["id".to_string(), "name".to_string()]);
+        assert_eq!(flattened_names, vec!["id".to_owned(), "name".to_owned()]);
     }
 
     #[test]
@@ -366,10 +387,10 @@ mod tests {
         assert_eq!(
             flattened_names,
             vec![
-                "user_id".to_string(),
-                "address.street".to_string(),
-                "address.zip".to_string(),
-                "is_active".to_string(),
+                "user_id".to_owned(),
+                "address.street".to_owned(),
+                "address.zip".to_owned(),
+                "is_active".to_owned(),
             ]
         );
     }
@@ -399,10 +420,10 @@ mod tests {
         assert_eq!(
             flattened_names,
             vec![
-                "id".to_string(),
-                "profile.age".to_string(),
-                "profile.location.city".to_string(),
-                "profile.location.country".to_string(),
+                "id".to_owned(),
+                "profile.age".to_owned(),
+                "profile.location.city".to_owned(),
+                "profile.location.country".to_owned(),
             ]
         );
     }
@@ -451,7 +472,7 @@ mod tests {
         // Since the code only recurses on DataType::Struct, List and Map remain as leaf nodes.
         assert_eq!(
             flattened_names,
-            vec!["list_of_ints".to_string(), "map_data".to_string(),]
+            vec!["list_of_ints".to_owned(), "map_data".to_owned(),]
         );
     }
 }

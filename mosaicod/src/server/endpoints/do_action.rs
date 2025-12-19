@@ -1,15 +1,9 @@
-use std::collections::{HashMap, HashSet};
-use std::sync::Arc;
-use std::time::Instant;
-
-use futures::stream::{FuturesUnordered, StreamExt};
 use log::{info, trace, warn};
-use tokio::sync::{Mutex, Semaphore};
 
 use crate::{
     marshal::{self, ActionRequest, ActionResponse},
-    params, query,
-    repo::{self, FacadeError, FacadeLayer, FacadeSequence, FacadeTopic},
+    query,
+    repo::{self, FacadeError, FacadeLayer, FacadeQuery, FacadeSequence, FacadeTopic},
     server::errors::ServerError,
     store, types,
     types::{MetadataBlob, Resource},
@@ -301,136 +295,15 @@ pub async fn do_action(
         ActionRequest::Query(data) => {
             info!("performing a query");
 
-            let mut cx = repo.connection();
-
             let filter = marshal::query_filter_from_serde_value(data.query)?;
 
             trace!("query filter: {:?}", filter);
 
-            let (seq_filt, top_filt, dc_filt) = filter.into_parts();
+            let groups = FacadeQuery::query(filter, ts_engine, repo).await?;
 
-            // True is the user applied no filters on topic or sequences
-            let no_topic_filter = (seq_filt.is_none() || seq_filt.as_ref().unwrap().is_empty())
-                && (top_filt.is_none() || top_filt.as_ref().unwrap().is_empty());
+            trace!("groups found: {:?}", groups);
 
-            let mut topics = repo::topic_from_query_filter(&mut cx, seq_filt, top_filt).await?;
-
-            trace!("topics found after initial filtering {:?}", topics);
-
-            // Here we loop for all fields and ops defined in the query for the ontology catalog,
-            // trying to find a chunk that matches. If a chunk is found a query to the chunk
-            // data file is performed to find at least a match.
-            if let Some(data_catalog_filter) = dc_filt {
-                let filtered_topics: Arc<Mutex<HashSet<i32>>> =
-                    Arc::new(Mutex::new(HashSet::new()));
-
-                let chunks = repo::chunks_from_filters(
-                    &mut cx, // comment for formatting
-                    data_catalog_filter.clone(),
-                    Some(&topics),
-                )
-                .await?;
-
-                let chunk_count = chunks.len();
-                trace!("found {} chunks for provided filter", chunk_count);
-
-                // Pre-fetch all topics needed for chunks to avoid N+1 queries
-                let topics_map: HashMap<i32, repo::TopicRecord> = if no_topic_filter {
-                    let chunk_topic_ids: Vec<i32> = chunks.iter().map(|c| c.topic_id).collect();
-                    let fetched_topics = repo::topic_find_by_ids(&mut cx, &chunk_topic_ids).await?;
-                    // Also extend the original topics list
-                    topics.extend(fetched_topics.iter().cloned());
-                    fetched_topics
-                        .into_iter()
-                        .map(|t| (t.topic_id, t))
-                        .collect()
-                } else {
-                    topics.iter().map(|t| (t.topic_id, t.clone())).collect()
-                };
-
-                let topics_map = Arc::new(topics_map);
-
-                // Process chunks in parallel with bounded concurrency
-                let start = Instant::now();
-                let max_concurrent = params::configurables().max_concurrent_chunk_queries;
-                let semaphore = Arc::new(Semaphore::new(max_concurrent));
-                let mut futures = FuturesUnordered::new();
-
-                for chunk in chunks {
-                    let permit = semaphore.clone().acquire_owned().await.map_err(|e| {
-                        ServerError::StreamError(format!("semaphore acquire failed: {}", e))
-                    })?;
-
-                    let ts_engine = ts_engine.clone();
-                    let filter = data_catalog_filter.clone();
-                    let filtered = filtered_topics.clone();
-                    let topics_map = topics_map.clone();
-
-                    futures.push(async move {
-                        let _permit = permit; // released on drop
-
-                        let topic = topics_map.get(&chunk.topic_id);
-                        if topic.is_none() {
-                            trace!(
-                                "can't find a topic associated with chunk `{}`, skipping.",
-                                chunk.chunk_uuid
-                            );
-                            return Ok::<_, ServerError>(());
-                        }
-                        let topic = topic.unwrap();
-
-                        trace!(
-                            "performing query on data file `{}`",
-                            chunk.data_file().to_string_lossy()
-                        );
-
-                        let qr = ts_engine
-                            .read(
-                                chunk.data_file(),
-                                topic.serialization_format().unwrap(), // TODO: handle error
-                                false,
-                            )
-                            .await?;
-
-                        let qr = qr.filter(filter)?;
-                        let count = qr.count().await?;
-
-                        if count != 0 {
-                            trace!("found {count} records matching filter in chunk");
-                            filtered.lock().await.insert(topic.topic_id);
-                        } else {
-                            trace!(
-                                "discarding chunk `{}` for no query match (row count is {count})",
-                                chunk.chunk_uuid
-                            );
-                        }
-
-                        Ok(())
-                    });
-                }
-
-                // Await all futures and propagate any errors
-                while let Some(result) = futures.next().await {
-                    result?;
-                }
-
-                let elapsed = start.elapsed();
-                info!(
-                    "processed {} chunks in {:?} ({:.2}ms/chunk, {} concurrent)",
-                    chunk_count,
-                    elapsed,
-                    elapsed.as_millis() as f64 / chunk_count.max(1) as f64,
-                    max_concurrent
-                );
-
-                let filtered_topics = filtered_topics.lock().await;
-                trace!("filtered topics: {:?}", *filtered_topics);
-                topics.retain(|e| filtered_topics.contains(&e.topic_id));
-            }
-
-            let group = repo::sequences_group_from_topics(&mut cx, topics).await?;
-
-            ActionResponse::Query(group.into())
+            ActionResponse::Query(groups.into())
         }
     };
 
@@ -451,7 +324,7 @@ mod tests {
         store: &store::testing::Store,
         name: &str,
     ) -> Result<types::ResourceId, repo::FacadeError> {
-        let handle = FacadeSequence::new(name.to_string(), (*store).clone(), (*repo).clone());
+        let handle = FacadeSequence::new(name.to_owned(), (*store).clone(), (*repo).clone());
 
         let metadata = types::SequenceMetadata::new(
             marshal::JsonMetadataBlob::try_from_str(
@@ -475,8 +348,8 @@ mod tests {
         sequence: &types::ResourceId,
         name: &str,
     ) -> Result<types::ResourceId, repo::FacadeError> {
-        let handle = FacadeTopic::new(name.to_string(), (*store).clone(), (*repo).clone());
-        let props = types::TopicProperties::new(rw::Format::Default, "test_tag".to_string());
+        let handle = FacadeTopic::new(name.to_owned(), (*store).clone(), (*repo).clone());
+        let props = types::TopicProperties::new(rw::Format::Default, "test_tag".to_owned());
 
         let metadata = types::TopicMetadata::new(
             props,
@@ -498,7 +371,7 @@ mod tests {
     /// This tests checks the creation against the repository and compares values to check if
     /// the creation was successful.
     async fn sequence_create(pool: sqlx::Pool<repo::Database>) -> sqlx::Result<()> {
-        let name = "/test_sequence".to_string();
+        let name = "/test_sequence".to_owned();
 
         let repo = repo::testing::Repository::new(pool);
         let store = store::testing::Store::new_random_on_tmp().unwrap();
@@ -548,7 +421,7 @@ mod tests {
     #[sqlx::test]
     /// Test checking if the creation of an already existing sequence fails.
     async fn sequence_create_existing(pool: sqlx::Pool<repo::Database>) -> sqlx::Result<()> {
-        let name = "test_sequence".to_string();
+        let name = "test_sequence".to_owned();
         let repo = repo::testing::Repository::new(pool);
         let store = store::testing::Store::new_random_on_tmp().unwrap();
 
@@ -567,8 +440,8 @@ mod tests {
     #[sqlx::test]
     /// Test checking if the creation of an already existing sequence fails.
     async fn topic_create(pool: sqlx::Pool<repo::Database>) -> sqlx::Result<()> {
-        let sequence_name = "test_sequence".to_string();
-        let topic_name = "test_sequence/test_topic".to_string();
+        let sequence_name = "test_sequence".to_owned();
+        let topic_name = "test_sequence/test_topic".to_owned();
 
         let repo = repo::testing::Repository::new(pool);
         let store = store::testing::Store::new_random_on_tmp().unwrap();
@@ -588,8 +461,8 @@ mod tests {
     #[sqlx::test]
     /// Test checking if the creation of an already existing sequence fails.
     async fn topic_create_unauthorized(pool: sqlx::Pool<repo::Database>) -> sqlx::Result<()> {
-        let sequence_name = "test_sequence".to_string();
-        let topic_name = "test_topic".to_string();
+        let sequence_name = "test_sequence".to_owned();
+        let topic_name = "test_topic".to_owned();
 
         let repo = repo::testing::Repository::new(pool);
         let store = store::testing::Store::new_random_on_tmp().unwrap();

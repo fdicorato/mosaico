@@ -289,7 +289,7 @@ impl FacadeTopic {
 
         let format = record
             .serialization_format()
-            .ok_or_else(|| FacadeError::MissingMetadataField("serialization_format".to_string()))?;
+            .ok_or_else(|| FacadeError::MissingMetadataField("serialization_format".to_owned()))?;
 
         let datafiles = self
             .store
@@ -298,7 +298,7 @@ impl FacadeTopic {
 
         let mut total_size = 0;
         for file in &datafiles {
-            total_size = self.store.size(file).await?;
+            total_size += self.store.size(file).await?;
         }
 
         Ok(types::TopicSystemInfo {
