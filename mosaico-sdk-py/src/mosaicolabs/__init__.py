@@ -24,6 +24,7 @@ from .handlers import (
     TopicHandler as TopicHandler,
     TopicWriter as TopicWriter,
     TopicDataStreamer as TopicDataStreamer,
+    SystemInfo as SystemInfo,
 )
 
 # --- Core Models ---
@@ -117,9 +118,14 @@ from .enum import (
     OnErrorPolicy as OnErrorPolicy,
 )
 
+from .logging import get_logger as get_logger, setup_sdk_logging as setup_sdk_logging
+
 __all__ = [
     # Client
     "MosaicoClient",
+    # Logging
+    "get_logger",
+    "setup_sdk_logging",
     # Handlers
     "SequenceHandler",
     "SequenceWriter",
@@ -127,6 +133,7 @@ __all__ = [
     "TopicHandler",
     "TopicWriter",
     "TopicDataStreamer",
+    "SystemInfo",
     # Core Models
     "BaseModel",
     "Serializable",
@@ -193,3 +200,11 @@ __all__ = [
     "SequenceStatus",
     "OnErrorPolicy",
 ]
+
+
+# --- Set up the top-level logger for the SDK ---
+
+from logging import NullHandler
+
+logger = get_logger()
+logger.addHandler(NullHandler())
