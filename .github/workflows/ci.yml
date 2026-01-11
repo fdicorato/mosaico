@@ -45,7 +45,6 @@ jobs:
           workspaces: "mosaicod -> target"
           cache-targets: true
           cache-on-failure: true
-          shared-key: "rust-stable"
 
       - name: Run Linter
         working-directory: mosaicod
@@ -69,7 +68,6 @@ jobs:
           workspaces: "mosaicod -> target"
           cache-targets: true
           cache-on-failure: true
-          shared-key: "rust-stable"
 
       - name: Install System Dependencies
         run: |
@@ -121,7 +119,6 @@ jobs:
           workspaces: "mosaicod -> target"
           cache-targets: true
           cache-on-failure: true
-          shared-key: "rust-stable"
 
       - name: Install System Dependencies
         run: |
