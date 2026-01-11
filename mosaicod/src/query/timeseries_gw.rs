@@ -109,6 +109,25 @@ impl TimeseriesGatewayResult {
         ))
     }
 
+    pub fn filter_by_timestamp_range(
+        mut self,
+        ts_range: types::TimestampRange,
+    ) -> Result<Self, Error> {
+        if !ts_range.start.is_unbounded() {
+            self.data_frame = self.data_frame.filter(
+                col(params::ARROW_SCHEMA_COLUMN_NAME_TIMESTAMP).gt_eq(lit(ts_range.start.as_i64())),
+            )?;
+        }
+
+        if !ts_range.end.is_unbounded() {
+            self.data_frame = self.data_frame.filter(
+                col(params::ARROW_SCHEMA_COLUMN_NAME_TIMESTAMP).lt(lit(ts_range.end.as_i64())),
+            )?;
+        }
+
+        Ok(self)
+    }
+
     pub fn filter<V>(self, filter: query::OntologyExprGroup<V>) -> Result<Self, Error>
     where
         V: Into<query::Value>,
@@ -173,7 +192,7 @@ impl TimeseriesGatewayResult {
                 Error::bad_field(params::ARROW_SCHEMA_COLUMN_NAME_TIMESTAMP.to_owned())
             })?;
 
-            return Ok(types::TimestampRange::new(ts_min, ts_max));
+            return Ok(types::TimestampRange::between(ts_min, ts_max));
         }
 
         Err(Error::NotFound)

@@ -55,7 +55,14 @@ class SequenceDataStreamer:
         self._topic_readers = topic_readers
 
     @classmethod
-    def connect(cls, sequence_name: str, topics: List[str], client: fl.FlightClient):
+    def connect(
+        cls,
+        sequence_name: str,
+        topics: List[str],
+        start_timestamp_ns: Optional[int],
+        end_timestamp_ns: Optional[int],
+        client: fl.FlightClient,
+    ):
         """
         Factory method to initialize the Sequence reader.
 
@@ -74,19 +81,34 @@ class SequenceDataStreamer:
             json.dumps(
                 {
                     "resource_locator": sequence_name,
+                    # TODO: is ok for server to receive 'null'?
+                    "timestamp_ns_start": start_timestamp_ns,
+                    "timestamp_ns_end": end_timestamp_ns,
                 }
             )
         )
-        flight_info = client.get_flight_info(descriptor)
+        try:
+            flight_info = client.get_flight_info(descriptor)
+        except Exception as e:
+            raise ConnectionError(
+                f"Server error while asking for Sequence descriptor, {e}"
+            )
 
         topic_readers: Dict[str, TopicDataStreamer] = {}
 
         # Create a reader for each endpoint (topic)
         for ep in flight_info.endpoints:
-            ep_ticket_data = _parse_ep_ticket(ep.ticket)
-            if ep_ticket_data is None or (topics and ep_ticket_data[1] not in topics):
+            if len(ep.locations) != 1:
                 continue
-            treader = TopicDataStreamer.connect(client=client, ticket=ep.ticket)
+            ep_ticket_data = _parse_ep_ticket(ep.locations[0].uri)
+            if ep_ticket_data is None:
+                logger.error(
+                    f"Skipping endpoint with invalid ticket format: '{ep.locations[0].uri}'"
+                )
+                continue
+            if topics and ep_ticket_data[1] not in topics:
+                continue
+            treader = TopicDataStreamer.connect(client=client, topic_name=ep_ticket_data[1], ticket=ep.ticket)
             topic_readers[treader.name()] = treader
 
         if not topic_readers:
