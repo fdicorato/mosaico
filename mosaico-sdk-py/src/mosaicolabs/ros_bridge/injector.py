@@ -391,7 +391,7 @@ class RosbagInjector:
             return
 
         # Retrieve the writer from Sequenceriter local cache or create new one on server
-        twriter = seq_writer.get_topic(ros_msg.topic)
+        twriter = seq_writer.get_topic_writer(ros_msg.topic)
         # Should theoretically not be None if exists returned True
         if twriter is None:
             # Register new topic on server

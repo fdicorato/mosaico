@@ -68,7 +68,7 @@ def _make_sequence_data_stream(host, port):
     out_stream: SequenceDataStream = SequenceDataStream(
         items=[],
         tstamp_ns_start=0,
-        tstamp_ns_end=(steps-1)*dt_nanosec,
+        tstamp_ns_end=(steps - 1) * dt_nanosec,
     )
 
     time_gen = sequential_time_generator(
@@ -115,7 +115,7 @@ def _inject_sequence_data_stream(_make_sequence_data_stream, host, port):
         metadata=UPLOADED_SEQUENCE_METADATA,
     ) as swriter:
         for ds_item in _make_sequence_data_stream.items:
-            twriter = swriter.get_topic(topic_name=ds_item.topic)
+            twriter = swriter.get_topic_writer(topic_name=ds_item.topic)
             if twriter is None:
                 twriter = swriter.topic_create(
                     topic_name=ds_item.topic,
@@ -144,7 +144,7 @@ def _inject_sequences_mockup(host, port):
         ) as swriter:
             for tdata in sdata["topics"]:
                 tname = tdata["name"]
-                twriter = swriter.get_topic(topic_name=tname)
+                twriter = swriter.get_topic_writer(topic_name=tname)
                 if twriter is None:
                     twriter = swriter.topic_create(
                         topic_name=tname,

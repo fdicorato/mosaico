@@ -7,6 +7,7 @@ class FlightAction(StrEnum):
     # Sequences related
     SEQUENCE_CREATE = "sequence_create"
     SEQUENCE_FINALIZE = "sequence_finalize"
+    SEQUENCE_NEW_VERSION = "sequence_new_version"
     SEQUENCE_NOTIFY_CREATE = "sequence_notify_create"
     SEQUENCE_SYSTEM_INFO = "sequence_system_info"
     SEQUENCE_ABORT = "sequence_abort"

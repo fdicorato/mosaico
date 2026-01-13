@@ -117,7 +117,7 @@ class _BaseSequenceWriter(ABC):
         4.  **Status Integrity**: Updates the internal `_sequence_status` to `Error`
             if any part of the process fails.
 
-        **Notes:**
+        .. Notes::
         - Override this method if your specific sequence implementation requires
         custom teardown logic that differs from the standard Mosaico flow.
         Examples include:
@@ -137,7 +137,7 @@ class _BaseSequenceWriter(ABC):
             try:
                 # Normal Exit: Finalize everything
                 self._close_topics(with_error=False)
-                self.close()
+                self._finalize()
 
             except Exception as e:
                 # An exception occurred during cleanup or finalization
@@ -245,8 +245,6 @@ class _BaseSequenceWriter(ABC):
         Returns:
             TopicWriter: A writer instance configured for this topic.
             None: If any error occurs
-
-
         """
         ACTION = FlightAction.TOPIC_CREATE
         self._check_entered()
@@ -328,7 +326,7 @@ class _BaseSequenceWriter(ABC):
                     payload={"name": pack_topic_resource_name(self._name, topic_name)},
                     expected_type=None,
                 )
-            except Exception:
+            except Exception as e:
                 self._logger.error(
                     str(
                         _make_exception(
@@ -345,7 +343,20 @@ class _BaseSequenceWriter(ABC):
         """Returns the current status of the sequence."""
         return self._sequence_status
 
-    def close(self):
+    def topic_writer_exists(self, topic_name: str) -> bool:
+        """Checks if a local TopicWriter exists for the name."""
+        return topic_name in self._topic_writers
+
+    def list_topic_writers(self) -> list[str]:
+        """Returns list of active topic names."""
+        return [k for k in self._topic_writers.keys()]
+
+    def get_topic_writer(self, topic_name: str) -> Optional[TopicWriter]:
+        """Retrieves a TopicWriter instance, if it exists."""
+        return self._topic_writers.get(topic_name)
+
+    # --- Private lifetime management methods ---
+    def _finalize(self):
         """
         Explicitly finalizes the sequence.
 
@@ -413,18 +424,6 @@ class _BaseSequenceWriter(ABC):
                 raise _make_exception(
                     f"Error sending 'abort' for sequence '{self._name}'.", e
                 )
-
-    def topic_exists(self, topic_name: str) -> bool:
-        """Checks if a local TopicWriter exists for the name."""
-        return topic_name in self._topic_writers
-
-    def list_topics(self) -> list[str]:
-        """Returns list of active topic names."""
-        return [k for k in self._topic_writers.keys()]
-
-    def get_topic(self, topic_name: str) -> Optional[TopicWriter]:
-        """Retrieves a TopicWriter instance, if it exists."""
-        return self._topic_writers.get(topic_name)
 
     def _close_topics(self, with_error: bool) -> None:
         """
