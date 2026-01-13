@@ -23,10 +23,6 @@ from ..logging import get_logger
 from ..enum import FlightAction, OnErrorPolicy
 from ..handlers.config import WriterConfig
 from ..handlers.system_info import SystemInfo
-from .connection import (
-    DEFAULT_MAX_BATCH_BYTES,
-    DEFAULT_MAX_BATCH_SIZE_RECORDS,
-)
 
 # Set the hierarchical logger
 logger = get_logger(__name__)
@@ -281,18 +277,6 @@ class MosaicoClient:
         Returns:
             SequenceWriter: An initialized writer instance.
         """
-        # Use defaults if specific batch sizes aren't provided
-        max_batch_size_bytes = (
-            max_batch_size_bytes
-            if max_batch_size_bytes is not None
-            else DEFAULT_MAX_BATCH_BYTES
-        )
-        max_batch_size_records = (
-            max_batch_size_records
-            if max_batch_size_records is not None
-            else DEFAULT_MAX_BATCH_SIZE_RECORDS
-        )
-
         return SequenceWriter(
             sequence_name=sequence_name,
             client=self._control_client,
