@@ -6,55 +6,42 @@ It manages the lifecycle of the sequence on the server (Create -> Write -> Final
 and distributes client resources (Connections, Executors) to individual Topics.
 """
 
-from typing import Any, Dict, Type, Optional
+from typing import Any, Dict, Optional
 import pyarrow.flight as fl
 
 from .config import WriterConfig
-from .helpers import _make_exception, _validate_sequence_name
-from .topic_writer import TopicWriter
+from .helpers import _validate_sequence_name
+from .internal.base_sequence_writer import _BaseSequenceWriter
 from ..comm.do_action import _do_action, _DoActionResponseKey
 from ..comm.connection import _ConnectionPool
 from ..comm.executor_pool import _ExecutorPool
-from ..enum import FlightAction, OnErrorPolicy, SequenceStatus
-from ..helpers import pack_topic_resource_name
+from ..enum import FlightAction, SequenceStatus
 from ..logging import get_logger
-from ..models import Serializable
 
 # Set the hierarchical logger
 logger = get_logger(__name__)
 
 
-class SequenceWriter:
+class SequenceWriter(_BaseSequenceWriter):
     """
-    Orchestrates the creation and writing of a Sequence.
+    Specialized writer for the initial creation and population of a Mosaico Sequence.
+
+    This class implements the lifecycle handshake required to register a brand-new
+    sequence on the server. It leverages the 'Multi-Lane' architecture of the
+    base class to provide high-performance, parallel data streaming across
+    multiple topics.
 
     **Key Responsibilities:**
-    1.  **Lifecycle Management:** Sends creation, finalization, or abort signals to the server.
-    2.  **Resource Distribution:** Implements the "Multi-Lane" architecture. It pulls
-        network connections and thread executors from the `MosaicoClient` pools and
-        assigns them to new `TopicWriter` instances. This ensures isolation and
-        parallelism between topics (e.g., high-bandwidth video vs low-bandwidth telemetry).
+    1.  **Sequence Initialization**: Executes the `SEQUENCE_CREATE` action upon
+        entering the execution context.
+    2.  **Metadata Management**: Associates user-defined metadata with the new
+        sequence during the creation phase.
+    3.  **Resource Delegation**: Inherits the orchestration of network connections
+        and thread executors to ensure isolated, non-blocking topic writes.
     """
 
     # -------------------- Class attributes --------------------
-    _name: str
     _metadata: Dict[str, Any]
-    _topic_writers: Dict[str, TopicWriter]
-    _control_client: fl.FlightClient
-    """The FlightClient used for metadata operations (creating topics, finalizing sequence)."""
-
-    _connection_pool: Optional[_ConnectionPool]
-    """The pool of FlightClients available for data streaming."""
-
-    _executor_pool: Optional[_ExecutorPool]
-    """The pool of ThreadPoolExecutors available for asynch I/O."""
-
-    _config: WriterConfig
-    """Configuration object containing error policies and batch size limits."""
-
-    _sequence_status: SequenceStatus = SequenceStatus.Null
-    _key: Optional[str] = None
-    _entered: bool = False
 
     # -------------------- Constructor --------------------
     def __init__(
@@ -67,24 +54,42 @@ class SequenceWriter:
         config: WriterConfig,
     ):
         """
-        Internal constructor. Use `MosaicoClient.sequence_create()` instead.
+        Initializes a new SequenceWriter instance.
+
+        .. note::
+            This is an internal constructor. Application code should use
+            `MosaicoClient.sequence_create()` to obtain a managed instance.
+
+        Args:
+            sequence_name (str): The semantic name for the new sequence.
+            client (fl.FlightClient): The control-plane client for metadata actions.
+            connection_pool (Optional[_ConnectionPool]): Shared pool for data streaming.
+            executor_pool (Optional[_ExecutorPool]): Shared pool for async I/O.
+            metadata (dict[str, Any]): Global metadata to attach to the sequence.
+            config (WriterConfig): Writing policies (batching, error handling).
         """
         _validate_sequence_name(sequence_name)
-        self._name: str = sequence_name
+        super().__init__(
+            sequence_name=sequence_name,
+            client=client,
+            config=config,
+            connection_pool=connection_pool,
+            executor_pool=executor_pool,
+            logger=logger,
+        )
         self._metadata: dict[str, Any] = metadata
-        self._config = config
-        self._topic_writers: Dict[str, TopicWriter] = {}
-        self._control_client = client
-        self._connection_pool = connection_pool
-        self._executor_pool = executor_pool
 
-    # --- Context Manager ---
-    def __enter__(self) -> "SequenceWriter":
+    # -------------------- Base class abstract method override --------------------
+    def _on_context_enter(self):
         """
-        Initializes the sequence on the server.
+        Performs the server-side handshake to create the new sequence.
 
-        Sends `SEQUENCE_CREATE` and retrieves the unique `sequence_key` needed
-        to authorize topic creation.
+        Triggers the `SEQUENCE_CREATE` action, transmitting the sequence name
+        and initial metadata. Upon success, it captures the unique authorization
+        key required for subsequent topic creation.
+
+        Raises:
+            Exception: If the server rejects the creation or returns an empty response.
         """
         ACTION = FlightAction.SEQUENCE_CREATE
 
@@ -102,304 +107,7 @@ class SequenceWriter:
             raise Exception(f"Action '{ACTION.value}' returned no response.")
 
         self._key = act_resp.key
-        # Set internal state and return self
         self._entered = True
         self._sequence_status = SequenceStatus.Pending
-        return self
 
-    def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[Any],
-    ) -> None:
-        """
-        Finalizes the sequence.
-
-        - If successful: Finalizes all topics and the sequence itself.
-        - If error: Finalizes topics in error mode and either Aborts (Delete)
-          or Reports the error based on `WriterConfig.on_error`.
-        """
-        error_in_block = exc_type is not None
-        out_exc = exc_val
-
-        if not error_in_block:
-            try:
-                # Normal Exit: Finalize everything
-                self._close_topics(with_error=False)
-                self.close()
-
-            except Exception as e:
-                # An exception occurred during cleanup or finalization
-                logger.error(
-                    f"Exception during __exit__ for sequence '{self._name}': '{e}'"
-                )
-                # notify error and go on
-                out_exc = e
-                error_in_block = True
-
-        if error_in_block:  # either in with block or after close operations
-            # Exception occurred: Clean up and handle policy
-            logger.error(
-                f"Exception in SequenceWriter '{self._name}' block. Inner err: '{out_exc}'"
-            )
-            try:
-                self._close_topics(with_error=True)
-            except Exception as e:
-                logger.error(
-                    f"Exception during __exit__ with error in block (finalizing topics) for sequence '{self._name}': '{e}'"
-                )
-                out_exc = e
-
-            # Apply the sequence-level error policy
-            if self._config.on_error == OnErrorPolicy.Delete:
-                self._abort()
-            else:
-                self._error_report(str(out_exc))
-
-            # Last thing to do: DO NOT SET BEFORE!
-            self._sequence_status = SequenceStatus.Error
-
-            if exc_type is None and out_exc is not None:
-                raise out_exc  # Re-raise the cleanup error if it's the only one
-
-    def __del__(self):
-        """Destructor check to warn if the writer was left pending."""
-        name = getattr(self, "_name", "__not_initialized__")
-        status = getattr(self, "_sequence_status", SequenceStatus.Null)
-
-        if status == SequenceStatus.Pending:
-            logger.warning(
-                f"SequenceWriter '{name}' destroyed without calling close(). "
-                "Resources may not have been released properly."
-            )
-
-    def _check_entered(self):
-        """Ensures methods are only called inside a `with` block."""
-        if not self._entered:
-            raise RuntimeError("SequenceWriter must be used within a 'with' block.")
-
-    # --- Public API ---
-    def topic_create(
-        self,
-        topic_name: str,
-        metadata: dict[str, Any],
-        ontology_type: Type[Serializable],
-    ) -> Optional[TopicWriter]:
-        """
-        Creates a new topic within the sequence.
-
-        This method assigns a dedicated connection and executor from the pool
-        (if available) to the new topic, enabling parallel writing.
-
-        Args:
-            topic_name (str): The name of the new topic.
-            metadata (dict[str, Any]): Topic-specific metadata.
-            ontology_type (Type[Serializable]): The data model class.
-
-        Returns:
-            TopicWriter: A writer instance configured for this topic.
-            None: If any error occurs
-
-
-        """
-        ACTION = FlightAction.TOPIC_CREATE
-        self._check_entered()
-
-        if topic_name in self._topic_writers:
-            logger.error(f"Topic '{topic_name}' already exists in this sequence.")
-            return None
-
-        logger.debug(f"Requesting new topic '{topic_name}' for sequence '{self._name}'")
-
-        try:
-            # Register topic on server
-            act_resp = _do_action(
-                client=self._control_client,
-                action=ACTION,
-                payload={
-                    "sequence_key": self._key,
-                    "name": pack_topic_resource_name(self._name, topic_name),
-                    "serialization_format": ontology_type.__serialization_format__.value,
-                    "ontology_tag": ontology_type.__ontology_tag__,
-                    "user_metadata": metadata,
-                },
-                expected_type=_DoActionResponseKey,
-            )
-        except Exception as e:
-            logger.error(
-                str(
-                    _make_exception(
-                        f"Failed to execute '{ACTION.value}' action for sequence '{self._name}', topic '{topic_name}'.",
-                        e,
-                    )
-                )
-            )
-            return None
-
-        if act_resp is None:
-            logger.error(f"Action '{ACTION.value}' returned no response.")
-            return None
-
-        # --- Resource Assignment Strategy ---
-        if self._connection_pool:
-            # Round-Robin assignment from the pool (Async mode)
-            data_client = self._connection_pool.get_next()
-        else:
-            # Reuse control client (Sync mode)
-            data_client = self._control_client
-
-        # Assign executor if pool is available
-        executor = self._executor_pool.get_next() if self._executor_pool else None
-
-        try:
-            writer = TopicWriter.create(
-                sequence_name=self._name,
-                topic_name=topic_name,
-                topic_key=act_resp.key,
-                client=data_client,
-                executor=executor,
-                metadata=metadata,
-                ontology_type=ontology_type,
-                config=self._config,
-            )
-            self._topic_writers[topic_name] = writer
-
-        except Exception as e:
-            logger.error(
-                str(
-                    _make_exception(
-                        f"Failed to initialize 'TopicWriter' for sequence '{self._name}', topic '{topic_name}'. Topic will be deleted from db.",
-                        e,
-                    )
-                )
-            )
-            try:
-                _do_action(
-                    client=self._control_client,
-                    action=FlightAction.TOPIC_DELETE,
-                    payload={"name": pack_topic_resource_name(self._name, topic_name)},
-                    expected_type=None,
-                )
-            except Exception:
-                logger.error(
-                    str(
-                        _make_exception(
-                            f"Failed to send TOPIC_DELETE do_action for sequence '{self._name}', topic '{topic_name}'.",
-                            e,
-                        )
-                    )
-                )
-            return None
-
-        return writer
-
-    def sequence_status(self) -> SequenceStatus:
-        """Returns the current status of the sequence."""
-        return self._sequence_status
-
-    def close(self):
-        """
-        Explicitly finalizes the sequence.
-
-        Sends `SEQUENCE_FINALIZE` to the server, marking data as immutable.
-        """
-        self._check_entered()
-        if self._sequence_status == SequenceStatus.Pending:
-            try:
-                _do_action(
-                    client=self._control_client,
-                    action=FlightAction.SEQUENCE_FINALIZE,
-                    payload={
-                        "name": self._name,
-                        "key": self._key,
-                    },
-                    expected_type=None,
-                )
-                self._sequence_status = SequenceStatus.Finalized
-                logger.info(f"Sequence '{self._name}' finalized successfully.")
-                return
-            except Exception as e:
-                # _do_action raised: re-raise
-                self._sequence_status = SequenceStatus.Error  # Sets status to Error
-                raise _make_exception(
-                    f"Error sending 'finalize' action for sequence '{self._name}'. Server state may be inconsistent.",
-                    e,
-                )
-
-    def _error_report(self, err: str):
-        """Internal: Sends error report to server."""
-        if self._sequence_status == SequenceStatus.Pending:
-            try:
-                _do_action(
-                    client=self._control_client,
-                    action=FlightAction.SEQUENCE_NOTIFY_CREATE,
-                    payload={
-                        "name": self._name,
-                        "notify_type": "error",
-                        "msg": str(err),
-                    },
-                    expected_type=None,
-                )
-                logger.info(f"Sequence '{self._name}' reported error.")
-            except Exception as e:
-                raise _make_exception(
-                    f"Error sending 'sequence_report_error' for '{self._name}'.", e
-                )
-
-    def _abort(self):
-        """Internal: Sends Abort command (Delete policy)."""
-        if self._sequence_status != SequenceStatus.Finalized:
-            try:
-                _do_action(
-                    client=self._control_client,
-                    action=FlightAction.SEQUENCE_ABORT,
-                    payload={
-                        "name": self._name,
-                        "key": self._key,
-                    },
-                    expected_type=None,
-                )
-                logger.info(f"Sequence '{self._name}' aborted successfully.")
-                self._sequence_status = SequenceStatus.Error
-            except Exception as e:
-                raise _make_exception(
-                    f"Error sending 'abort' for sequence '{self._name}'.", e
-                )
-
-    def topic_exists(self, topic_name: str) -> bool:
-        """Checks if a local TopicWriter exists for the name."""
-        return topic_name in self._topic_writers
-
-    def list_topics(self) -> list[str]:
-        """Returns list of active topic names."""
-        return [k for k in self._topic_writers.keys()]
-
-    def get_topic(self, topic_name: str) -> Optional[TopicWriter]:
-        """Retrieves a TopicWriter instance, if it exists."""
-        return self._topic_writers.get(topic_name)
-
-    def _close_topics(self, with_error: bool) -> None:
-        """
-        Iterates over all TopicWriters and finalizes them.
-        """
-        logger.info(
-            f"Freeing TopicWriters {'WITH ERROR' if with_error else ''} for sequence '{self._name}'."
-        )
-        errors = []
-        for topic_name, twriter in self._topic_writers.items():
-            try:
-                twriter.finalize(with_error=with_error)
-            except Exception as e:
-                logger.error(f"Failed to finalize topic '{topic_name}': '{e}'")
-                errors.append(e)
-
-        # Delete all TopicWriter instances, nothing can be done from here on
-        self._topic_writers = {}
-
-        if errors:
-            first_error = errors[0]
-            raise _make_exception(
-                f"Errors occurred closing topics: {len(errors)} topic(s) failed to finalize.",
-                first_error,
-            )
+    # NOTE: No need of overriding `_on_context_exit` as default behavior is ok.
