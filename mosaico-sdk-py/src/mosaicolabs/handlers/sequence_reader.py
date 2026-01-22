@@ -10,9 +10,9 @@ from mosaicolabs.models.message import Message
 import pyarrow.flight as fl
 from typing import Any, List, Optional, Dict
 
+from .endpoints import TopicParsingError, TopicResourceManifest
 from .internal.topic_read_state import _TopicReadState
 from .topic_reader import TopicDataStreamer
-from .helpers import _parse_ep_ticket
 from ..logging_config import get_logger
 
 # Set the hierarchical logger
@@ -44,6 +44,8 @@ class SequenceDataStreamer:
         sequence_name: str,
         client: fl.FlightClient,
         topic_readers: Dict[str, TopicDataStreamer],
+        timestamp_ns_min: int,
+        timestamp_ns_max: int,
     ):
         """
         Internal constructor.
@@ -53,6 +55,10 @@ class SequenceDataStreamer:
         self._name: str = sequence_name
         self._fl_client = client
         self._topic_readers = topic_readers
+        self._timestamp_ns_min = timestamp_ns_min
+        """Lowest timestamp [ns] in the sequence (among all the topics)"""
+        self._timestamp_ns_max = timestamp_ns_max
+        """Highest timestamp [ns] in the sequence (among all the topics)"""
 
     @classmethod
     def connect(
@@ -92,22 +98,33 @@ class SequenceDataStreamer:
             )
 
         topic_readers: Dict[str, TopicDataStreamer] = {}
+        tstamps_ns_min = []
+        tstamps_ns_max = []
 
-        # Create a reader for each endpoint (topic)
+        # Extract the Topics resource manifests data and their tickets
         for ep in flight_info.endpoints:
-            if len(ep.locations) != 1:
+            try:
+                topic_resrc_mdata = TopicResourceManifest.from_flight_endpoint(ep)
+            except TopicParsingError as e:
+                logger.error(f"Skipping invalid topic endpoint, err: '{e}'")
                 continue
-            ep_ticket_data = _parse_ep_ticket(ep.locations[0].uri)
-            if ep_ticket_data is None:
-                logger.error(
-                    f"Skipping endpoint with invalid ticket format: '{ep.locations[0].uri}'"
-                )
+            if topics and topic_resrc_mdata.topic_name not in topics:
                 continue
-            if topics and ep_ticket_data[1] not in topics:
-                continue
+            # NOTE: Here we are getting the 'start'/'end' fields, as the user may have
+            # asked for a time-windowed stream
             treader = TopicDataStreamer.connect(
-                client=client, topic_name=ep_ticket_data[1], ticket=ep.ticket
+                client=client,
+                topic_name=topic_resrc_mdata.topic_name,
+                ticket=ep.ticket,
+                timestamp_ns_min=topic_resrc_mdata.timestamp_ns_start,
+                timestamp_ns_max=topic_resrc_mdata.timestamp_ns_end,
             )
+            # Collect the true topics min and max timestamps
+            # NOTE: Here we are getting the 'start'/'end' fields, as the user may have
+            # asked for a time-windowed stream
+            tstamps_ns_min.append(topic_resrc_mdata.timestamp_ns_start)
+            tstamps_ns_max.append(topic_resrc_mdata.timestamp_ns_end)
+            # Cache the topic reader instance
             topic_readers[treader.name()] = treader
 
         if not topic_readers:
@@ -115,7 +132,13 @@ class SequenceDataStreamer:
                 f"Unable to open TopicDataStreamer handlers for sequence '{sequence_name}'"
             )
 
-        return cls(sequence_name, client, topic_readers)
+        return cls(
+            sequence_name,
+            client,
+            topic_readers,
+            timestamp_ns_min=min(tstamps_ns_min),
+            timestamp_ns_max=max(tstamps_ns_max),
+        )
 
     # --- Iterator Protocol Implementation ---
 
@@ -205,6 +228,26 @@ class SequenceDataStreamer:
         return self._winning_rdstate.topic_name, Message.create(
             self._winning_rdstate.ontology_tag, **row_dict
         )
+
+    @property
+    def timestamp_ns_min(self):
+        """
+        Return the lowest timestamp in nanoseconds, among all the topics.
+
+        If the stream is time-windowed, this represent the lowest timestamp
+        of the windowed data subset.
+        """
+        return self._timestamp_ns_min
+
+    @property
+    def timestamp_ns_max(self):
+        """
+        Return the highest timestamp in nanoseconds, among all the topics
+
+        If the stream is time-windowed, this represent the highest timestamp
+        of the windowed data subset.
+        """
+        return self._timestamp_ns_max
 
     def close(self):
         """Closes all underlying topic streams."""
