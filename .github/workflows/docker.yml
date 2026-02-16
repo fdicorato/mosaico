@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,6 +16,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -30,7 +34,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # Lowercases the image name automatically for GHCR compatibility
           images: ghcr.io/${{ github.repository_owner }}/mosaicod
           tags: |
             type=semver,pattern={{version}}
@@ -43,8 +46,8 @@ jobs:
           context: mosaicod
           file: docker/dockerfiles/Dockerfile.mosaicod
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # Enables GitHub Actions cache to speed up Rust compilation in Docker
           cache-from: type=gha
           cache-to: type=gha,mode=max
