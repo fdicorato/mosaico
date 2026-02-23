@@ -1,6 +1,7 @@
-import pyarrow as pa
+from typing import Dict, Generator, List, Optional
+
 import pandas as pd
-from typing import List, Dict, Optional, Generator
+import pyarrow as pa
 
 from mosaicolabs.handlers import SequenceHandler
 from mosaicolabs.logging_config import get_logger
@@ -11,19 +12,20 @@ logger = get_logger(__name__)
 
 class DataFrameExtractor:
     """
-    High-performance bridge between Mosaico Sequences and Tabular DataFrames.
+    Extracts and manages data from Mosaico Sequences, converting them into tabular DataFrames.
 
-    This class extracts data from multiple topics in a sequence and converts them
-    into a single, flattened, sparse DataFrame. It uses a windowed approach to
-    ensure memory efficiency even with multi-gigabyte sequences.
+    This class serves as a high-performance bridge for training ML models or performing data analysis.
+    It extracts data from multiple sequence topics and unifies them into a single, flattened,
+    sparse DataFrame aligned by timestamps.
 
-    Attributes:
-        _sequence_handler (SequenceHandler): The handler for the source sequence.
+    Key Features:
 
-    .. Warning::
-        Setting `window_sec` to a very large value or float("inf") will disable windowing.
-        The extractor will attempt to load the entire requested time range into memory.
-        This is only recommended for small sequences or systems with high RAM capacity.
+    - **Memory Efficiency**: Uses a windowed approach to process multi-gigabyte sequences in chunks
+      without overloading RAM.
+    - **Flattening**: Automatically flattens nested structures (e.g., `pose.position.x`) into
+      dot-notation columns.
+    - **Sparse Alignment**: Merges multiple topics with different frequencies into a single timeline
+      (using `NaN` for missing values at specific timestamps).
     """
 
     def __init__(self, sequence_handler: "SequenceHandler"):
@@ -49,17 +51,49 @@ class DataFrameExtractor:
         to maintain a low memory footprint. It handles batches that cross window
         boundaries by carrying over the remainder to the next chunk.
 
-        .. NOTE:: This function must be iterated (e.g. called in a for loop)
+        Important:
+            This function must be iterated (e.g. called in a for loop)
+
+        Warning:
+            Setting `window_sec` to a very large value might disable windowing.
+            The extractor will attempt to load the entire requested time range into memory.
+            This is only recommended for small sequences or systems with high RAM capacity.
 
         Args:
-            selection (List, optional): Topics to extract. Defaults to all topics.
+            topics (List[str], optional): Topics to extract. Defaults to all topics.
             window_sec (float): Duration of each DataFrame chunk in seconds.
-            start_ns (int, optional): Global start time for extraction.
-            end_ns (int, optional): Global end time for extraction.
+            timestamp_ns_start (int, optional): Global start time for extraction.
+            timestamp_ns_end (int, optional): Global end time for extraction.
 
         Yields:
             pd.DataFrame: A sparse, flattened DataFrame containing data from all
                 selected topics and their fields within the current time window.
+
+        Example:
+            ```python
+            # Obtain a dataframe with DataFrameExtractor
+            from mosaicolabs import MosaicoClient, IMU, Image
+            from mosaicolabs.ml import DataFrameExtractor, SyncTransformer
+
+            with MosaicoClient.connect("localhost", 6726) as client:
+                sequence_handler = client.get_sequence_handler("example_sequence")
+                for df in DataFrameExtractor(sequence_handler).to_pandas_chunks(
+                    topics = ["/front/imu", "/front/camera/image_raw"]
+                ):
+                    # Do something with the dataframe.
+                    # For example, you can sync the data using the `SyncTransformer`:
+                    sync_transformer = SyncTransformer(
+                        target_fps = 30, # resample at 30 Hz and fill the Nans with a Hold policy
+                    )
+                    synced_df = sync_transformer.transform(df)
+
+                    # Reconstruct the image message from a dataframe row
+                    image_msg = Message.from_dataframe_row(synced_df, "/front/camera/image_raw")
+                    image_data = image_msg.get_data(Image)
+                    # Show the image
+                    image_data.to_pillow().show()
+                    # ...
+            ```
         """
         # Check if time information in sequence are coherent
         if (
@@ -118,7 +152,9 @@ class DataFrameExtractor:
             )
 
         # Carry-over buffer to handle batches spanning across two windows
-        carry_over: Dict[str, pd.DataFrame] = {t: pd.DataFrame() for t in topic_names}
+        carry_over: Dict[str, pd.DataFrame] = {
+            t: pd.DataFrame() for t in topic_names
+        }
 
         try:
             current_window_start = global_start_ns
@@ -148,7 +184,9 @@ class DataFrameExtractor:
                             t_name,
                             reader.ontology_tag,
                         )
-                        df_topic = pd.concat([df_topic, new_df], ignore_index=True)
+                        df_topic = pd.concat(
+                            [df_topic, new_df], ignore_index=True
+                        )
                         del new_df  # Free tmp memory immediately
 
                     if not df_topic.empty:
@@ -161,7 +199,7 @@ class DataFrameExtractor:
                             ) & (df_topic["timestamp_ns"] < current_window_end)
 
                             window_parts.append(df_topic[mask])
-                            carry_over[t_name] = df_topic[~mask]
+                            carry_over[t_name] = df_topic.loc[~mask]
 
                 # Consolidate and sort the sparse windowed DataFrame
                 if window_parts:
@@ -217,12 +255,29 @@ class DataFrameExtractor:
         return df
 
     def _match_columns(self, columns: pd.Index, fields: List[str]) -> List[str]:
+        """
+        Filters and expands the requested fields against the available DataFrame columns.
+
+        Args:
+            columns (pd.Index): The columns present in the DataFrame.
+            fields (List[str]): The list of fields/prefixes to match.
+
+        Returns:
+            List[str]: A list of matched column names.
+
+        Raises:
+            ValueError: If a requested field is not found in the columns.
+        """
         prefixes = tuple(f + "." for f in fields)
         fields_set = set(fields)
 
         for f in fields:
-            if not (f in columns or any(c.startswith(f + ".") for c in columns)):
-                raise ValueError(f"The field '{f}' does not exist in the columns.")
+            if not (
+                f in columns or any(c.startswith(f + ".") for c in columns)
+            ):
+                raise ValueError(
+                    f"The field '{f}' does not exist in the columns."
+                )
 
         cols = [
             c
