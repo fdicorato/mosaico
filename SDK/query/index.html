@@ -1,0 +1,4084 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Query mechanism">
+      
+      
+      
+        <link rel="canonical" href="https://docs.mosaico.dev/SDK/query/">
+      
+      
+        <link rel="prev" href="../handling/reading/">
+      
+      
+        <link rel="next" href="../bridges/ml/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Querying Catalogs - Mosaico Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Manrope:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Manrope";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#query-execution-the-response-model" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Mosaico Documentation" class="md-header__button md-logo" aria-label="Mosaico Documentation" data-md-component="logo">
+      
+  <img src="../../assets/mosaico_logomark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Mosaico Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Querying Catalogs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mosaico-labs/mosaico" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Mosaico
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  SDK
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../daemon/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Daemon
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/release_cycle/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Mosaico Documentation" class="md-nav__button md-logo" aria-label="Mosaico Documentation" data-md-component="logo">
+      
+  <img src="../../assets/mosaico_logomark.svg" alt="logo">
+
+    </a>
+    Mosaico Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mosaico-labs/mosaico" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mosaico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SDK
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SDK
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Setup
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-To
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/serialized_writing_from_csv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing a Single Topic
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/serialized_writing_from_multi_csv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing Multiple Topics Serially
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/interleaved_writing_from_multi_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing Interleaved Topics
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Reading a Sequence and its Topics
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Streaming Data from Sequences and Topics
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/query_sequences/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Querying Sequences by Name and Metadata
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/query_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Querying Topics by Name and Metadata
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/query_data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Detecting Events in Time-Series Data
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/query_multi_domain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Multi-Domain Querying
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/query_chained/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Complex Chained Queries
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_11" id="__nav_2_3_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/ontology_customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Customizing the Data Ontology
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/ros_injection_1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      ROS Injection
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    In Depth
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    In Depth
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Client
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models & Ontology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4_3" id="__nav_2_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Handling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Handling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../handling/data-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing & Reading Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../handling/writing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Writing Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../handling/reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Reading Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Querying Catalogs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Querying Catalogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#query-execution-the-response-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Query Execution &amp; The Response Model
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Query Execution &amp; The Response Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restricted-queries-chaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Restricted Queries (Chaining)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Restricted Queries (Chaining)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-chaining-is-necessary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          When Chaining is Necessary
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Architecture
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Query Layers
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Query Layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#querysequence-sequence-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          <autoref identifier="mosaicolabs.models.query.builders.QuerySequence"><code>QuerySequence</code></autoref> (Sequence Layer)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#querytopic-topic-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          <autoref identifier="mosaicolabs.models.query.builders.QueryTopic"><code>QueryTopic</code></autoref> (Topic Layer)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryontologycatalog-ontology-catalog-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          <autoref identifier="mosaicolabs.models.query.builders.QueryOntologyCatalog"><code>QueryOntologyCatalog</code></autoref> (Ontology Catalog Layer)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convenience-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Convenience Methods
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic-expression-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Generic Expression Method
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-q-proxy-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The <code>.Q</code> Proxy Mechanism
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The .Q Proxy Mechanism">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-vs-unsupported-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Supported vs. Unsupported Types
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraints-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Constraints &amp; Limitations
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4_5" id="__nav_2_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bridges
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bridges
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bridges/ml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Machine Learning & Analytics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bridges/ros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/comm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Communication Module
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/enum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Enum Module
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Handling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Handling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/handlers/reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Data Retrieval
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/handlers/writing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing Data
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_4" id="__nav_2_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query Module
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Query Module
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/query/builders/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Query Builders
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/query/internal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Internal Types
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/query/response/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Response
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/models/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Base Models and Mixins
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/models/data_types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Base Data Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/models/geometry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Geometry Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/models/platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Platform Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/models/sensors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Sensors Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bridges
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bridges
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Machine Learning Module
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6_2" id="__nav_2_5_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS-Bridge
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_5_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ROS-Bridge
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/ros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      ROS
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/custom_ontology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      ROS Custom Ontology
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6_2_3" id="__nav_2_5_6_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adapters
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_5_6_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Adapters
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/adapters/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Base Adapter
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/adapters/std_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      std_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/adapters/geometry_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      geometry_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/adapters/sensor_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      sensor_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/adapters/nav_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      nav_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_reference/bridges/ros/adapters/tf2_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      tf2_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../daemon/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Daemon
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Daemon
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../daemon/install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Setup
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../daemon/actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Custom Actions
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../daemon/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Ingestion
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../daemon/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Retrieval
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../daemon/query/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Queries
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../daemon/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      CLI Reference
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/release_cycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Release Cycle
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#query-execution-the-response-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Query Execution &amp; The Response Model
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Query Execution &amp; The Response Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restricted-queries-chaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Restricted Queries (Chaining)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Restricted Queries (Chaining)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-chaining-is-necessary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          When Chaining is Necessary
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Architecture
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Query Layers
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Query Layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#querysequence-sequence-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          <autoref identifier="mosaicolabs.models.query.builders.QuerySequence"><code>QuerySequence</code></autoref> (Sequence Layer)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#querytopic-topic-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          <autoref identifier="mosaicolabs.models.query.builders.QueryTopic"><code>QueryTopic</code></autoref> (Topic Layer)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryontologycatalog-ontology-catalog-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          <autoref identifier="mosaicolabs.models.query.builders.QueryOntologyCatalog"><code>QueryOntologyCatalog</code></autoref> (Ontology Catalog Layer)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convenience-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Convenience Methods
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic-expression-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Generic Expression Method
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-q-proxy-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The <code>.Q</code> Proxy Mechanism
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The .Q Proxy Mechanism">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-vs-unsupported-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Supported vs. Unsupported Types
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraints-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Constraints &amp; Limitations
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Mosaico
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    SDK
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../client/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    In Depth
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Querying Catalogs</h1>
+
+<p>The <strong>Query Module</strong> provides a high-performance, <strong>fluent</strong> interface for discovering and filtering data within the Mosaico Data Platform. It is designed to move beyond simple keyword searches, allowing you to perform deep, semantic queries across metadata, system catalogs, and the physical content of sensor streams.</p>
+<p>A typical query workflow involves chaining methods within specialized builders to create a unified request that the server executes atomically. In the example below, the code orchestrates a multi-domain search to isolate high-interest data segments. Specifically, it queries for:</p>
+<ul>
+<li><strong>Sequence Discovery</strong>: Finds any recording session whose name contains the string <code>"test_drive"</code> <strong>AND</strong> where the custom user metadata indicates an <code>"environment.visibility"</code> value strictly less than 50.</li>
+<li><strong>Topic Filtering</strong>: Restricts the search specifically to the data channel named <code>"/front/camera/image"</code>.</li>
+<li><strong>Ontology Analysis</strong>: Performs a deep inspection of IMU sensor payloads to identify specific time segments where the <strong>X-axis acceleration exceeds a certain threshold</strong> while simultaneously the <strong>Y-axis acceleration exceeds a certain threshold</strong>.</li>
+</ul>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueryOntologyCatalog</span><span class="p">,</span> <span class="n">QuerySequence</span><span class="p">,</span> <span class="n">QueryTopic</span><span class="p">,</span> <span class="n">IMU</span><span class="p">,</span> <span class="n">MosaicoClient</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Establish a connection to the Mosaico Data Platform</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="c1"># Perform a unified server-side query across multiple domains:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="c1"># Filter Sequence-level metadata</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">QuerySequence</span><span class="p">()</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="o">.</span><span class="n">with_name_match</span><span class="p">(</span><span class="s2">&quot;test_drive&quot;</span><span class="p">)</span>  <span class="c1"># Use convenience method for fuzzy name matching</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span>               <span class="c1"># Use the .Q proxy to filter the `user_metadata` field</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>            <span class="n">Sequence</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">[</span><span class="s2">&quot;environment.visibility&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="p">),</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="c1"># Search on topics with specific names</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="n">QueryTopic</span><span class="p">()</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;/front/camera/image&quot;</span><span class="p">),</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="c1"># Perform deep time-series discovery within sensor payloads</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">include_timestamp_range</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Request temporal bounds for matches</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">5.0</span><span class="p">))</span>     <span class="c1"># Use the .Q proxy to filter the `acceleration` field</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)),</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="p">)</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="c1"># The server returns a QueryResponse grouped by Sequence for structured data management</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>            <span class="c1"># &#39;item.sequence&#39; contains the name for the matched sequence</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> 
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>            <span class="c1"># &#39;item.topics&#39; contains only the topics and time-segments </span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>            <span class="c1"># that satisfied the QueryOntologyCatalog criteria</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>            <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">:</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>                <span class="c1"># Access high-precision timestamps for the data segments found</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="o">.</span><span class="n">end</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Topic: </span><span class="si">{</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> | Match Window: </span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The provided example illustrates the core architecture of the Mosaico Query DSL. To effectively use this module, it is important to understand the two primary mechanisms that drive data discovery:</p>
+<ul>
+<li><strong>Query Builders (Fluent Logic Collectors)</strong>: Specialized builders like <a class="autorefs autorefs-internal" title="QuerySequence" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QuerySequence"><code>QuerySequence</code></a>, <a class="autorefs autorefs-internal" title="QueryTopic" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryTopic"><code>QueryTopic</code></a>, and <a class="autorefs autorefs-internal" title="QueryOntologyCatalog" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryOntologyCatalog"><code>QueryOntologyCatalog</code></a> serve as containers for your search criteria. They provide a <strong>Fluent Interface</strong> where you can chain two types of methods:<ul>
+<li><strong>Convenience Methods</strong>: High-level helpers for common fields, such as <code>with_name()</code>, <code>with_name_match()</code>, or <code>with_created_timestamp()</code>.</li>
+<li><strong>Generic <code>with_expression()</code></strong>: A versatile method that accepts any expression obtained via the <strong><code>.Q</code> proxy</strong>, allowing you to define complex filters for nested user metadata or deep sensor payloads.</li>
+</ul>
+</li>
+<li><strong>The <code>.Q</code> Proxy (Dynamic Model Inspection)</strong>: Every <a class="autorefs autorefs-internal" title="mosaicolabs.models.Serializable" href="../API_reference/models/base/#mosaicolabs.models.Serializable"><code>Serializable</code></a> model in the Mosaico ontology features a static <code>.Q</code> attribute. This proxy dynamically inspects the model's underlying schema to build dot-notated field paths and intercepts attribute access (e.g., <code>IMU.Q.acceleration.x</code>). When a terminal method is called—such as <code>.gt()</code>, <code>.lt()</code>, or <code>.between()</code>—it generates a type-safe <strong>Atomic Expression</strong> used by the platform to filter physical sensor data or metadata fields.</li>
+</ul>
+<p>By combining these mechanisms, the Query Module delivers a robust filtering experience:</p>
+<ul>
+<li><strong>Multi-Domain Orchestration</strong>: Execute searches across Sequence metadata, Topic configurations, and raw Ontology sensor data in a single, atomic request.</li>
+<li><strong>Structured Response Management</strong>: Results are returned in a <a class="autorefs autorefs-internal" title="QueryResponse
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponse"><code>QueryResponse</code></a> that is automatically grouped by <code>Sequence</code>, making it easier to manage multi-sensor datasets.</li>
+</ul>
+<h2 id="query-execution-the-response-model">Query Execution &amp; The Response Model<a class="headerlink" href="#query-execution-the-response-model" title="Permanent link">&para;</a></h2>
+<p>Queries are executed via the <a class="autorefs autorefs-internal" title="query" href="../API_reference/comm/#mosaicolabs.comm.MosaicoClient.query"><code>query()</code></a> method exposed by the <a class="autorefs autorefs-internal" title="mosaicolabs.comm.MosaicoClient" href="../API_reference/comm/#mosaicolabs.comm.MosaicoClient"><code>MosaicoClient</code></a> class. When multiple builders are provided, they are combined with a logical <strong>AND</strong>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Return</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="query" href="../API_reference/comm/#mosaicolabs.comm.MosaicoClient.query"><code>query(*queries, query)</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="QueryResponse
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponse"><code>Optional[QueryResponse]</code></a></td>
+<td style="text-align: left;">Executes one or more queries against the platform catalogs. The provided queries are joined in AND condition. The method accepts a variable arguments of query builder objects or a pre-constructed <a class="autorefs autorefs-internal" title="Query" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.Query"><code>Query</code></a> object.</td>
+</tr>
+</tbody>
+</table>
+<p>The query execution returns a <a class="autorefs autorefs-internal" title="QueryResponse
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponse"><code>QueryResponse</code></a> object, which behaves like a standard Python list containing <a class="autorefs autorefs-internal" title="QueryResponseItem
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponseItem"><code>QueryResponseItem</code></a> objects.</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="autorefs autorefs-internal" title="QueryResponseItem
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponseItem"><code>QueryResponseItem</code></a></td>
+<td>Groups all matches belonging to the same <strong>Sequence</strong>. Contains a <code>QueryResponseItemSequence</code> and a list of related <code>QueryResponseItemTopic</code>.</td>
+</tr>
+<tr>
+<td><a class="autorefs autorefs-internal" title="QueryResponseItemSequence
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponseItemSequence"><code>QueryResponseItemSequence</code></a></td>
+<td>Represents a specific <strong>Sequence</strong> where matches were found. It includes the sequence name.</td>
+</tr>
+<tr>
+<td><a class="autorefs autorefs-internal" title="QueryResponseItemTopic
+
+
+  
+      dataclass
+  " href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponseItemTopic"><code>QueryResponseItemTopic</code></a></td>
+<td>Represents a specific <strong>Topic</strong> where matches were found. It includes the normalized topic path and the optional <code>timestamp_range</code> (the first and last occurrence of the condition).</td>
+</tr>
+</tbody>
+</table>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">MosaicoClient</span><span class="p">,</span> <span class="n">QueryOntologyCatalog</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs.models.sensors</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMU</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Establish a connection to the Mosaico Data Platform</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="c1"># Define a Deep Data Filter using the .Q Query Proxy</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="c1"># We are searching for vertical impact events where acceleration.z &gt; 15.0 m/s^2</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">impact_qbuilder</span> <span class="o">=</span> <span class="n">QueryOntologyCatalog</span><span class="p">(</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="c1"># include_timestamp_range returns the precise start/end of the matching event</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="n">include_timestamp_range</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="p">)</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="c1"># Execute the query via the client</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">impact_qbuilder</span><span class="p">)</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="c1"># The same can be obtained by using the Query object</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="c1"># results = client.query(</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>    <span class="c1">#     query = Query(</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>    <span class="c1">#         impact_qbuilder</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>    <span class="c1">#     )</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>    <span class="c1"># )</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>    <span class="k">if</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>        <span class="c1"># Parse the structured QueryResponse object</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>        <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>            <span class="c1"># Iterate through matching topics within the sequence</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>            <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">:</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>                <span class="c1"># Topic names are normalized (sequence prefix is stripped) for direct use</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Match in: </span><span class="si">{</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>                <span class="c1"># Extract the temporal bounds of the event</span>
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>                <span class="k">if</span> <span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="p">:</span>
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>                    <span class="n">start</span> <span class="o">=</span> <span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="o">.</span><span class="n">start</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>                    <span class="n">end</span> <span class="o">=</span> <span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="o">.</span><span class="n">end</span>
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Occurrence: </span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> ns to </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2"> ns&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Temporal Windows</strong>: The <code>timestamp_range</code> provides the first and last occurrence of the queried condition within a topic, allowing you to slice data accurately for further analysis.</li>
+<li><strong>Result Normalization</strong>: <code>topic.name</code> returns the relative topic path (e.g., <code>/sensors/imu</code>), making it immediately compatible with other SDK methods like <a class="autorefs autorefs-internal" title="topic_handler" href="../API_reference/comm/#mosaicolabs.comm.MosaicoClient.topic_handler"><code>topic_handler()</code></a>.</li>
+</ul>
+<h3 id="restricted-queries-chaining">Restricted Queries (Chaining)<a class="headerlink" href="#restricted-queries-chaining" title="Permanent link">&para;</a></h3>
+<p>The <code>QueryResponse</code> class enables a powerful mechanism for <strong>iterative search refinement</strong> by allowing you to convert your current results back into a new query builder.
+This approach is essential for resolving complex, multi-modal dependencies where a single monolithic query would be logically ambiguous, inefficient or technically impossible.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Return Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="autorefs autorefs-internal" title="to_query_sequence" href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponse.to_query_sequence"><code>to_query_sequence()</code></a></td>
+<td><a class="autorefs autorefs-internal" title="QuerySequence" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QuerySequence"><code>QuerySequence</code></a></td>
+<td>Returns a query builder pre-filtered to include only the <strong>sequences</strong> present in the response.</td>
+</tr>
+<tr>
+<td><a class="autorefs autorefs-internal" title="to_query_topic" href="../API_reference/query/response/#mosaicolabs.models.query.response.QueryResponse.to_query_topic"><code>to_query_topic()</code></a></td>
+<td><a class="autorefs autorefs-internal" title="QueryTopic" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryTopic"><code>QueryTopic</code></a></td>
+<td>Returns a query builder pre-filtered to include only the specific <strong>topics</strong> identified in the response.</td>
+</tr>
+</tbody>
+</table>
+<p>When you invoke these factory methods, the SDK generates a new query expression containing an explicit <code>$in</code> filter populated with the identifiers held in the current response. This effectively <strong>"locks" the search domain</strong>, allowing you to apply new criteria to a restricted subset of your data without re-scanning the entire platform catalog.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">MosaicoClient</span><span class="p">,</span> <span class="n">QueryTopic</span><span class="p">,</span> <span class="n">QueryOntologyCatalog</span><span class="p">,</span> <span class="n">GPS</span><span class="p">,</span> <span class="n">String</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="c1"># Broad Search: Find all sequences where a GPS sensor reached a high-precision state (status=2)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">initial_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">GPS</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="p">)</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="c1"># &#39;initial_response&#39; now acts as a filtered container of matching sequences.</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="c1"># Domain Locking: Restrict the search scope to the results of the initial query</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">initial_response</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="c1"># .to_query_sequence() generates a QuerySequence pre-filled with the matching sequence names.</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">refined_query_builder</span> <span class="o">=</span> <span class="n">initial_response</span><span class="o">.</span><span class="n">to_query_sequence</span><span class="p">()</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="c1"># Targeted Refinement: Search for error patterns ONLY within the restricted domain</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="c1"># This ensures the platform only scans for &#39;[ERR]&#39; strings within sequences already validated for GPS precision.</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">final_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>            <span class="n">refined_query_builder</span><span class="p">,</span>                                         <span class="c1"># The &quot;locked&quot; sequence domain</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>            <span class="n">QueryTopic</span><span class="p">()</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;/localization/log_string&quot;</span><span class="p">),</span>    <span class="c1"># Target a specific log topic</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>            <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">String</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;[ERR]&quot;</span><span class="p">))</span>     <span class="c1"># Filter by exact data content pattern</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="p">)</span>
+</span></code></pre></div>
+<p>When a specific set of topics has been identified through a data-driven query (e.g., finding every camera topic that recorded a specific event), you can use <code>to_query_topic()</code> to "lock" your next search to those specific data channels. This is particularly useful when you need to verify a condition on a very specific subset of sensors across many sequences, bypassing the need to re-identify those topics in the next step.</p>
+<p>In the next example, we first find all topics of a specific channel from a specific sequence name pattern, and then search specifically within <em>those</em> topics for any instances where the data content matches a specific pattern.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">MosaicoClient</span><span class="p">,</span> <span class="n">QueryTopic</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="c1"># Broad Search: Find sequences with high-precision GPS</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">initial_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>            <span class="n">QueryTopic</span><span class="p">()</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;/localization/log_string&quot;</span><span class="p">),</span> <span class="c1"># Target a specific log topic</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>            <span class="n">QuerySequence</span><span class="p">()</span><span class="o">.</span><span class="n">with_name_match</span><span class="p">(</span><span class="s2">&quot;test_winter_2025_&quot;</span><span class="p">)</span>  <span class="c1"># Filter by sequence name pattern</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="p">)</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="c1"># Chaining: Use results to &quot;lock&quot; the domain and find specific log-patterns in those sequences</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">initial_response</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="n">final_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>            <span class="n">initial_response</span><span class="o">.</span><span class="n">to_query_topic</span><span class="p">(),</span>              <span class="c1"># The &quot;locked&quot; topic domain</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>            <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">String</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;[ERR]&quot;</span><span class="p">))</span>  <span class="c1"># Filter by content</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="p">)</span>
+</span></code></pre></div>
+<h4 id="when-chaining-is-necessary">When Chaining is Necessary<a class="headerlink" href="#when-chaining-is-necessary" title="Permanent link">&para;</a></h4>
+<p>The previous example of the <code>GPS.status</code> query and the subsequent <code>/localization/log_string</code> topic search highlight exactly when <em>query chaining</em> becomes a technical necessity rather than just a recommendation. In the Mosaico Data Platform, a single <code>client.query()</code> call applies a logical <strong>AND</strong> across all provided builders to locate individual <strong>data streams (topics)</strong> that satisfy every condition simultaneously.
+Because a single topic cannot physically represent two different sensor types at once, such as being both a <code>GPS</code> sensor and a <code>String</code> log, a monolithic query attempting to filter for both on the same stream will inherently return zero results. Chaining resolves this by allowing you to find the correct <strong>Sequence</strong> context in step one, then "locking" that domain to find a different <strong>Topic</strong> within that same context in step two.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># AMBIGUOUS: This looks for ONE topic that is BOTH GPS and String</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">GPS</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">DGPS_FIX</span><span class="p">)),</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">String</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;[ERR]&quot;</span><span class="p">)),</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">QueryTopic</span><span class="p">()</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;/localization/log_string&quot;</span><span class="p">)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<h3 id="query-layers">Query Layers<a class="headerlink" href="#query-layers" title="Permanent link">&para;</a></h3>
+<p>Mosaico organizes data into three distinct architectural layers, each with its own specialized Query Builder:</p>
+<h4 id="querysequence-sequence-layer"><a class="autorefs autorefs-internal" title="QuerySequence" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QuerySequence"><code>QuerySequence</code></a> (Sequence Layer)<a class="headerlink" href="#querysequence-sequence-layer" title="Permanent link">&para;</a></h4>
+<p>API Reference: <a class="autorefs autorefs-internal" title="QuerySequence" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QuerySequence"><code>mosaicolabs.models.query.builders.QuerySequence</code></a>.</p>
+<p>Filters recordings based on high-level session metadata, such as the sequence name or the time it was created.</p>
+<p><strong>Example</strong> Querying for sequences by name and creation date</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">MosaicoClient</span><span class="p">,</span> <span class="n">Topic</span><span class="p">,</span> <span class="n">QuerySequence</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="c1"># Search for sequences by project name and creation date</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        <span class="n">QuerySequence</span><span class="p">()</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>        <span class="o">.</span><span class="n">with_name_match</span><span class="p">(</span><span class="s2">&quot;test_drive&quot;</span><span class="p">)</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>        <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">Sequence</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="s2">&quot;Apollo&quot;</span><span class="p">))</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="o">.</span><span class="n">with_created_timestamp</span><span class="p">(</span><span class="n">time_start</span><span class="o">=</span><span class="n">Time</span><span class="o">.</span><span class="n">from_float</span><span class="p">(</span><span class="mf">1690000000.0</span><span class="p">))</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="p">)</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="c1"># Inspect the response</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="querytopic-topic-layer"><a class="autorefs autorefs-internal" title="QueryTopic" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryTopic"><code>QueryTopic</code></a> (Topic Layer)<a class="headerlink" href="#querytopic-topic-layer" title="Permanent link">&para;</a></h4>
+<p>API Reference: <a class="autorefs autorefs-internal" title="QueryTopic" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryTopic"><code>mosaicolabs.models.query.builders.QueryTopic</code></a>.</p>
+<p>Targets specific data channels within a sequence. You can search for topics by name pattern or by their specific Ontology type (e.g., "Find all GPS topics").</p>
+<p><strong>Example</strong> Querying for image topics by ontology tag, metadata key and topic creation timestamp</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">MosaicoClient</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Topic</span><span class="p">,</span> <span class="n">QueryTopic</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="c1"># Query for all &#39;image&#39; topics created in a specific timeframe, matching some metadata (key, value) pair</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="n">QueryTopic</span><span class="p">()</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        <span class="o">.</span><span class="n">with_ontology_tag</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">ontology_tag</span><span class="p">())</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="o">.</span><span class="n">with_created_timestamp</span><span class="p">(</span><span class="n">time_start</span><span class="o">=</span><span class="n">Time</span><span class="o">.</span><span class="n">from_float</span><span class="p">(</span><span class="mi">1700000000</span><span class="p">))</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">Topic</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">[</span><span class="s2">&quot;camera_id.serial_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="s2">&quot;ABC123_XYZ&quot;</span><span class="p">))</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="p">)</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="c1"># Inspect the response</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>        <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="queryontologycatalog-ontology-catalog-layer"><a class="autorefs autorefs-internal" title="QueryOntologyCatalog" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryOntologyCatalog"><code>QueryOntologyCatalog</code></a> (Ontology Catalog Layer)<a class="headerlink" href="#queryontologycatalog-ontology-catalog-layer" title="Permanent link">&para;</a></h4>
+<p>API Reference: <a class="autorefs autorefs-internal" title="QueryOntologyCatalog" href="../API_reference/query/builders/#mosaicolabs.models.query.builders.QueryOntologyCatalog"><code>mosaicolabs.models.query.builders.QueryOntologyCatalog</code></a>.</p>
+<p>Filters based on the <strong>actual time-series content</strong> of the sensors (e.g., "Find events where <code>acceleration.z</code> exceeded a specific value").</p>
+<p><strong>Example</strong> Querying for mixed sensor data</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">MosaicoClient</span><span class="p">,</span> <span class="n">QueryOntologyCatalog</span><span class="p">,</span> <span class="n">GPS</span><span class="p">,</span> <span class="n">IMU</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="k">with</span> <span class="n">MosaicoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">6726</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>        <span class="c1"># Chain multiple sensor filters together</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>        <span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>            <span class="n">QueryOntologyCatalog</span><span class="p">()</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>            <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">GPS</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">satellites</span><span class="o">.</span><span class="n">geq</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>            <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">Temperature</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">between</span><span class="p">([</span><span class="mf">273.15</span><span class="p">,</span> <span class="mf">373.15</span><span class="p">]))</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>            <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">Pressure</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">geq</span><span class="p">(</span><span class="mi">100000</span><span class="p">))</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        <span class="p">)</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>        <span class="c1"># Inspect the response</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>        <span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>            <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>        <span class="c1"># Filter for a specific component value and extract the first and last occurrence times</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>        <span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>            <span class="n">QueryOntologyCatalog</span><span class="p">(</span><span class="n">include_timestamp_range</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>            <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">))</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>            <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">5.0</span><span class="p">))</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>            <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">Pose</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">geq</span><span class="p">(</span><span class="mf">0.707</span><span class="p">))</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>        <span class="p">)</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>        <span class="c1"># Inspect the response</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>        <span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>            <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="se">{{</span><span class="s2">topic.name:</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>                            <span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">topic</span><span class="o">.</span><span class="n">timestamp_range</span><span class="o">.</span><span class="n">end</span><span class="p">]</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>                            <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">}}</span><span class="s2">&quot;)</span>
+</span></code></pre></div>
+<p>The Mosaico Query Module offers two distinct paths for defining filters,  <strong>Convenience Methods</strong> and <strong>Generic Expression Method</strong>, both of which support <strong>method chaining</strong> to compose multiple criteria into a single query using a logical <strong>AND</strong>.</p>
+<h4 id="convenience-methods">Convenience Methods<a class="headerlink" href="#convenience-methods" title="Permanent link">&para;</a></h4>
+<p>The query layers provide high-level fluent helpers (<code>with_&lt;attribute&gt;</code>), built directly into the query builder classes and designed for ease of use.
+They allow you to filter data without deep knowledge of the internal model schema. 
+The builder automatically selects the appropriate field and operator (such as exact match vs. substring pattern) based on the method used.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuerySequence</span><span class="p">,</span> <span class="n">QueryTopic</span><span class="p">,</span> <span class="n">RobotJoint</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Build a filter with name pattern</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">qbuilder</span> <span class="o">=</span> <span class="n">QuerySequence</span><span class="p">()</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="o">.</span><span class="n">with_name_match</span><span class="p">(</span><span class="s2">&quot;test_drive&quot;</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># Execute the query</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">qbuilder</span><span class="p">)</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Inspect the response</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="c1"># Build a filter with ontology tag AND a specific creation time window</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="n">qbuilder</span> <span class="o">=</span> <span class="n">QueryTopic</span><span class="p">()</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="o">.</span><span class="n">with_ontology_tag</span><span class="p">(</span><span class="n">RobotJoint</span><span class="o">.</span><span class="n">ontology_tag</span><span class="p">())</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>    <span class="o">.</span><span class="n">with_created_timestamp</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">t1</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">t2</span><span class="p">)</span>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="c1"># Execute the query</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">qbuilder</span><span class="p">)</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="c1"># Inspect the response</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>    <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Best For</strong>: Standard system-level fields like Names and Timestamps.</li>
+</ul>
+<h4 id="generic-expression-method">Generic Expression Method<a class="headerlink" href="#generic-expression-method" title="Permanent link">&para;</a></h4>
+<p>The <code>with_expression()</code> method accepts raw <strong>Query Expressions</strong> generated through the <code>.Q</code> proxy. 
+This provides full access to every supported operator (<code>.gt()</code>, <code>.lt()</code>, <code>.between()</code>, etc.) for specific fields.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueryOntologyCatalog</span><span class="p">,</span> <span class="n">QuerySequence</span><span class="p">,</span> <span class="n">IMU</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Build a filter with name pattern and metadata-related expression</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">qbuilder</span> <span class="o">=</span> <span class="n">QuerySequence</span><span class="p">()</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="c1"># Use query proxy for generating a QueryExpression</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        <span class="n">Sequence</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;environment.visibility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="p">)</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    <span class="c1"># Can be AND-chained with convenience methods</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="o">.</span><span class="n">with_name_match</span><span class="p">(</span><span class="s2">&quot;test_drive&quot;</span><span class="p">)</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Execute the query</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">qbuilder</span><span class="p">)</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="c1"># Inspect the response</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="c1"># Build a filter with deep time-series data discovery and measurement time windowing</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="n">qbuilder</span> <span class="o">=</span> <span class="n">QueryOntologyCatalog</span><span class="p">()</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>    <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">5.0</span><span class="p">))</span>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>    <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">stamp</span><span class="o">.</span><span class="n">sec</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">1700134567</span><span class="p">))</span>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>    <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">stamp</span><span class="o">.</span><span class="n">nanosec</span><span class="o">.</span><span class="n">between</span><span class="p">([</span><span class="mi">123456</span><span class="p">,</span> <span class="mi">789123</span><span class="p">]))</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a><span class="c1"># Execute the query</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a><span class="n">qresponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">qbuilder</span><span class="p">)</span>
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="c1"># Inspect the response</span>
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="k">if</span> <span class="n">qresponse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>    <span class="c1"># Results are automatically grouped by Sequence for easier data management</span>
+</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qresponse</span><span class="p">:</span>
+</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sequence: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="p">[</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">topics</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Best For</strong>: Accessing specific Ontology data fields (e.g., acceleration, position, etc.) and custom <code>user_metadata</code> in <code>Sequence</code> and <code>Topic</code> data models.</li>
+</ul>
+<h3 id="the-q-proxy-mechanism">The <code>.Q</code> Proxy Mechanism<a class="headerlink" href="#the-q-proxy-mechanism" title="Permanent link">&para;</a></h3>
+<p>The Query Proxy is the cornerstone of Mosaico's type-safe data discovery. Every data model in the Mosaico Ontology (e.g., <code>IMU</code>, <code>GPS</code>, <code>Image</code>) is automatically injected with a static <code>.Q</code> attribute during class initialization. This mechanism transforms static data structures into dynamic, fluent interfaces for constructing complex filters.</p>
+<p>The proxy follows a three-step lifecycle to ensure that your queries are both semantically correct and high-performance:</p>
+<ol>
+<li><strong>Intelligent Mapping</strong>: During system initialization, the proxy inspects the sensor's schema recursively. It maps every nested field path (e.g., <code>"acceleration.x"</code>) to a dedicated <em>queryable</em> object, i.e. an object providing comparison operators and expression generation methods.</li>
+<li><strong>Type-Aware Operators</strong>: The proxy identifies the data type of each field (numeric, string, dictionary, or boolean) and exposes only the operators valid for that type. This prevents logical errors, such as attempting a substring <code>.match()</code> on a numeric acceleration value.</li>
+<li><strong>Intent Generation</strong>: When you invoke an operator (e.g., <code>.gt(15.0)</code>), the proxy generates a <code>QueryExpression</code>. This object encapsulates your search intent and is serialized into an optimized JSON format for the platform to execute.</li>
+</ol>
+<p>To understand how the proxy handles nested structures, inherited attributes, and data types, consider the <code>IMU</code> ontology class:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">IMU</span><span class="p">(</span><span class="n">Serializable</span><span class="p">,</span> <span class="n">HeaderMixin</span><span class="p">):</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">acceleration</span><span class="p">:</span> <span class="n">Vector3d</span>      <span class="c1"># Composed type: contains x, y, z</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">angular_velocity</span><span class="p">:</span> <span class="n">Vector3d</span>  <span class="c1"># Composed type: contains x, y, z</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quaternion</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Composed type: contains x, y, z, w</span>
+</span></code></pre></div>
+<p>The <code>.Q</code> proxy enables you to navigate the data exactly as it is defined in the model. By following the <code>IMU.Q</code> instruction, you can drill down through nested fields and inherited mixins using standard dot notation until you reach a base queryable type.</p>
+<p>The proxy automatically flattens the hierarchy, including fields inherited from <code>HeaderMixin</code> (like <code>frame_id</code> and <code>stamp</code>), assigning the correct queryable type and operators to each leaf node:
+(API Reference: <a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU--querying-with-the-q-proxy"><code>mosaicolabs.models.sensors.IMU</code></a>)</p>
+<table>
+<thead>
+<tr>
+<th>Proxy Field Path</th>
+<th>Queryable Type</th>
+<th>Supported Operators (Examples)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU.acceleration--querying-with-the-q-proxy"><code>IMU.Q.acceleration.x/y/z</code></a></strong></td>
+<td><strong>Numeric</strong></td>
+<td><code>.gt()</code>, <code>.lt()</code>, <code>.geq()</code>, <code>.leq()</code>, <code>.eq()</code>, <code>.between()</code>, <code>.in_()</code></td>
+</tr>
+<tr>
+<td><strong><a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU.angular_velocity--querying-with-the-q-proxy"><code>IMU.Q.angular_velocity.x/y/z</code></a></strong></td>
+<td><strong>Numeric</strong></td>
+<td><code>.gt()</code>, <code>.lt()</code>, <code>.geq()</code>, <code>.leq()</code>, <code>.eq()</code>, <code>.between()</code>, <code>.in_()</code></td>
+</tr>
+<tr>
+<td><strong><a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU.orientation--querying-with-the-q-proxy"><code>IMU.Q.orientation.x/y/z/w</code></a></strong></td>
+<td><strong>Numeric</strong></td>
+<td><code>.gt()</code>, <code>.lt()</code>, <code>.geq()</code>, <code>.leq()</code>, <code>.eq()</code>, <code>.between()</code>, <code>.in_()</code></td>
+</tr>
+<tr>
+<td><strong><a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU.header--querying-with-the-q-proxy"><code>IMU.Q.header.frame_id</code></a></strong></td>
+<td><strong>String</strong></td>
+<td><code>.eq()</code>, <code>.match()</code></td>
+</tr>
+<tr>
+<td><strong><a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU.header--querying-with-the-q-proxy"><code>IMU.Q.header.stamp.sec</code></a></strong></td>
+<td><strong>Numeric</strong></td>
+<td><code>.gt()</code>, <code>.lt()</code>, <code>.geq()</code>, <code>.leq()</code>, <code>.eq()</code>, <code>.between()</code>, <code>.in_()</code></td>
+</tr>
+<tr>
+<td><strong><a class="autorefs autorefs-internal" title="Querying with the " href="../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU.header--querying-with-the-q-proxy"><code>IMU.Q.header.stamp.nanosec</code></a></strong></td>
+<td><strong>Numeric</strong></td>
+<td><code>.gt()</code>, <code>.lt()</code>, <code>.geq()</code>, <code>.leq()</code>, <code>.eq()</code>, <code>.between()</code>, <code>.in_()</code></td>
+</tr>
+</tbody>
+</table>
+<p>The following table lists the supported operators for each data type:</p>
+<table>
+<thead>
+<tr>
+<th>Data Type</th>
+<th>Operators</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Numeric</strong></td>
+<td><code>.eq()</code>, <code>.neq()</code>, <code>.lt()</code>, <code>.leq()</code>, <code>.gt()</code>, <code>.geq()</code>, <code>.between()</code>, <code>.in_()</code></td>
+</tr>
+<tr>
+<td><strong>String</strong></td>
+<td><code>.eq()</code>, <code>.neq()</code>, <code>.match()</code> (i.e. substring), <code>.in_()</code></td>
+</tr>
+<tr>
+<td><strong>Boolean</strong></td>
+<td><code>.eq(True/False)</code></td>
+</tr>
+<tr>
+<td><strong>Dictionary</strong></td>
+<td><code>.eq()</code>, <code>.neq()</code>, <code>.lt()</code>, <code>.leq()</code>, <code>.gt()</code>, <code>.geq()</code>, <code>.between()</code>, <code>.in_()</code>, <code>.match()</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="supported-vs-unsupported-types">Supported vs. Unsupported Types<a class="headerlink" href="#supported-vs-unsupported-types" title="Permanent link">&para;</a></h4>
+<p>While the <code>.Q</code> proxy is highly versatile, it enforces specific rules on which data structures can be queried:</p>
+<ul>
+<li><strong>Supported Types</strong>: The proxy resolves all simple (int, float, str, bool) or composed types (like <code>Vector3d</code> or <code>Quaternion</code>). It will continue to expose nested fields as long as they lead to a primitive base type.</li>
+<li>
+<p><strong>Dictionaries</strong>: Dynamic fields, such as the <a class="autorefs autorefs-internal" title="user_metadata
+
+
+  
+      instance-attribute
+  " href="../API_reference/models/platform/#mosaicolabs.models.platform.platform_base.PlatformBase.user_metadata"><code>user_metadata</code></a> found in the <strong><a class="autorefs autorefs-internal" title="mosaicolabs.models.platform.Topic" href="../API_reference/models/platform/#mosaicolabs.models.platform.Topic"><code>Topic</code></a></strong> and <strong><a class="autorefs autorefs-internal" title="mosaicolabs.models.platform.Sequence" href="../API_reference/models/platform/#mosaicolabs.models.platform.Sequence"><code>Sequence</code></a></strong> platform models, are fully queryable through the proxy using bracket notation (e.g., <code>Topic.Q.user_metadata["key"]</code> or <code>Topic.Q.user_metadata["key.subkey.subsubkey"]</code>). This approach provides the flexibility to search across custom tags and dynamic properties that aren't part of a fixed schema. This dictionary-based querying logic is not restricted to platform models; it applies to any <strong>custom ontology model</strong> created by the user that contains a <code>dict</code> field.</p>
+<ul>
+<li><strong>Syntax</strong>: Instead of the standard dot notation used for fixed fields, you must use square brackets <code>["key"]</code> to target specific dictionary entries.</li>
+<li><strong>Nested Access</strong>: For dictionaries containing nested structures, you can use <strong>dot notation within the key string</strong> (e.g., <code>["environment.visibility"]</code>) to traverse sub-fields.</li>
+<li><strong>Operator Support</strong>: Because dictionary values are dynamic, these fields are "promiscuous," meaning they support all available numeric, string, and boolean operators without strict SDK-level type checking.</li>
+</ul>
+</li>
+<li>
+<p><strong>Unsupported Types (Lists and Tuples)</strong>: Any field defined as a container, such as a <strong>List</strong> or <strong>Tuple</strong> (e.g., <code>covariance: List[float]</code>), is currently skipped by the proxy generator. These fields will not appear in autocomplete and cannot be used in a query expression.</p>
+</li>
+</ul>
+<h2 id="constraints-limitations">Constraints &amp; Limitations<a class="headerlink" href="#constraints-limitations" title="Permanent link">&para;</a></h2>
+<p>While fully functional, the current implementation (v0.x) has a <strong>Single Occurrence Constraint</strong>.</p>
+<ul>
+<li><strong>Constraint</strong>: A specific data field path may appear <strong>only once</strong> within a single query builder instance. You cannot chain two separate conditions on the same field (e.g., <code>.gt(0.5)</code> and <code>.lt(1.0)</code>).
+    <div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># INVALID: The same field (acceleration.x) is used twice in the constructor</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">QueryOntologyCatalog</span><span class="p">()</span> \
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="o">.</span><span class="n">with_expression</span><span class="p">(</span><span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span> <span class="c1"># &lt;- Error! Duplicate field path</span>
+</span></code></pre></div></li>
+<li><strong>Solution</strong>: Use the built-in <strong><code>.between([min, max])</code></strong> operator to perform range filtering on a single field path.</li>
+<li><strong>Note</strong>: You can still query multiple <em>different</em> fields from the same sensor model (e.g., <code>acceleration.x</code> and <code>acceleration.y</code>) in one builder.
+    <div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># VALID: Each expression targets a unique field path</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">QueryOntologyCatalog</span><span class="p">(</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span>              <span class="c1"># Unique field</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">acceleration</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>              <span class="c1"># Unique field</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">IMU</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">angular_velocity</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">between</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>   <span class="c1"># Correct way to do ranges</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">include_timestamp_range</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="p">)</span>
+</span></code></pre></div></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../handling/reading/" class="md-footer__link md-footer__link--prev" aria-label="Previous: The Reading Workflow">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                The Reading Workflow
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../bridges/ml/" class="md-footer__link md-footer__link--next" aria-label="Next: Machine Learning &amp; Analytics">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Machine Learning & Analytics
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.code.annotate", "navigation.instant", "navigation.sections", "navigation.path", "navigation.indexes", "navigation.tabs", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4208 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="ROS-Mosaico Bridge">
+      
+      
+      
+        <link rel="canonical" href="https://docs.mosaico.dev/SDK/bridges/ros/">
+      
+      
+        <link rel="prev" href="../ml/">
+      
+      
+        <link rel="next" href="../../API_reference/comm/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>ROS - Mosaico Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Manrope:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Manrope";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Mosaico Documentation" class="md-header__button md-logo" aria-label="Mosaico Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/mosaico_logomark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Mosaico Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ROS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mosaico-labs/mosaico" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Mosaico
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  SDK
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../daemon/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Daemon
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../development/release_cycle/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Mosaico Documentation" class="md-nav__button md-logo" aria-label="Mosaico Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/mosaico_logomark.svg" alt="logo">
+
+    </a>
+    Mosaico Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mosaico-labs/mosaico" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mosaico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SDK
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SDK
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Setup
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-To
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/serialized_writing_from_csv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing a Single Topic
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/serialized_writing_from_multi_csv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing Multiple Topics Serially
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interleaved_writing_from_multi_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing Interleaved Topics
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Reading a Sequence and its Topics
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Streaming Data from Sequences and Topics
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/query_sequences/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Querying Sequences by Name and Metadata
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/query_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Querying Topics by Name and Metadata
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/query_data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Detecting Events in Time-Series Data
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/query_multi_domain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Multi-Domain Querying
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/query_chained/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Complex Chained Queries
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_11" id="__nav_2_3_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/ontology_customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Customizing the Data Ontology
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/ros_injection_1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      ROS Injection
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    In Depth
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    In Depth
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Client
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ontology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models & Ontology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4_3" id="__nav_2_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Handling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Handling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../handling/data-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing & Reading Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../handling/writing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Writing Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../handling/reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Reading Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../query/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Querying Catalogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4_5" id="__nav_2_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bridges
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bridges
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Machine Learning & Analytics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Architecture
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-loader-layer-rosloader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Loader Layer (<code>ROSLoader</code>)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-adaptation-layer-rosbridge-adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Adaptation Layer (<code>ROSBridge</code> &amp; Adapters)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Adaptation Layer (ROSBridge &amp; Adapters)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extending-the-bridge-custom-adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Extending the Bridge (Custom Adapters)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-orchestrator-rosbaginjector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Orchestrator (<code>RosbagInjector</code>)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Orchestrator (RosbagInjector)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-workflow-execution-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Core Workflow Execution: <code>run()</code>
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-blueprint-rosinjectionconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Blueprint: <code>ROSInjectionConfig</code>
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practical-example-programmatic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Practical Example: Programmatic Usage
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          CLI Usage
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-type-registry-rostyperegistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Type Registry (<code>ROSTypeRegistry</code>)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Type Registry (ROSTypeRegistry)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-loading-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Pre-loading Definitions
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#centralized-registration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Centralized Registration Example
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Testing &amp; Validation
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing &amp; Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-dataset-for-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Recommended Dataset for Verification
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nvidia-r2b-dataset-2024-injection-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          NVIDIA R2B Dataset 2024 Injection Performance
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-performance-factors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Understanding Performance Factors
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-issues-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Known Issues &amp; Limitations
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-message-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Supported Message Types
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supported Message Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-message-types-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Supported Message Types Table
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/comm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Communication Module
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/enum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Enum Module
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Handling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Handling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/handlers/reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Data Retrieval
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/handlers/writing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Writing Data
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_4" id="__nav_2_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query Module
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Query Module
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/query/builders/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Query Builders
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/query/internal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Internal Types
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/query/response/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Response
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/models/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Base Models and Mixins
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/models/data_types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Base Data Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/models/geometry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Geometry Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/models/platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Platform Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/models/sensors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Sensors Models
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bridges
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bridges
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Machine Learning Module
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6_2" id="__nav_2_5_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS-Bridge
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_5_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ROS-Bridge
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/ros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      ROS
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/custom_ontology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      ROS Custom Ontology
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6_2_3" id="__nav_2_5_6_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adapters
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_5_6_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Adapters
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/adapters/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Base Adapter
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/adapters/std_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      std_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/adapters/geometry_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      geometry_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/adapters/sensor_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      sensor_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/adapters/nav_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      nav_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../API_reference/bridges/ros/adapters/tf2_msgs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      tf2_msgs
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../daemon/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Daemon
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Daemon
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../daemon/install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Setup
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../daemon/actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Custom Actions
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../daemon/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Ingestion
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../daemon/retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Retrieval
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../daemon/query/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Queries
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../daemon/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      CLI Reference
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/release_cycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Release Cycle
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Architecture
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-loader-layer-rosloader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Loader Layer (<code>ROSLoader</code>)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-adaptation-layer-rosbridge-adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Adaptation Layer (<code>ROSBridge</code> &amp; Adapters)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Adaptation Layer (ROSBridge &amp; Adapters)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extending-the-bridge-custom-adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Extending the Bridge (Custom Adapters)
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-orchestrator-rosbaginjector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Orchestrator (<code>RosbagInjector</code>)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Orchestrator (RosbagInjector)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-workflow-execution-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Core Workflow Execution: <code>run()</code>
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-blueprint-rosinjectionconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Blueprint: <code>ROSInjectionConfig</code>
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practical-example-programmatic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Practical Example: Programmatic Usage
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          CLI Usage
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-type-registry-rostyperegistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          The Type Registry (<code>ROSTypeRegistry</code>)
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Type Registry (ROSTypeRegistry)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-loading-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Pre-loading Definitions
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#centralized-registration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Centralized Registration Example
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Testing &amp; Validation
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing &amp; Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-dataset-for-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Recommended Dataset for Verification
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nvidia-r2b-dataset-2024-injection-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          NVIDIA R2B Dataset 2024 Injection Performance
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-performance-factors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Understanding Performance Factors
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-issues-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Known Issues &amp; Limitations
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-message-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Supported Message Types
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supported Message Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-message-types-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Supported Message Types Table
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Mosaico
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    SDK
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../client/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    In Depth
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../ml/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Bridges
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>ROS</h1>
+
+<p>The <strong>ROS Bridge</strong> module serves as the ingestion gateway for ROS (Robot Operating System) data into the Mosaico Data Platform. Its primary function is to solve the interoperability challenges associated with ROS bag files—specifically format fragmentation (ROS 1 <code>.bag</code> vs. ROS 2 <code>.mcap</code>/<code>.db3</code>) and the lack of strict schema enforcement in custom message definitions.</p>
+<p>The core philosophy of the module is <strong>"Adaptation, Not Just Parsing."</strong> Rather than simply extracting raw dictionaries from ROS messages, the bridge actively translates them into the standardized <strong>Mosaico Ontology</strong>. For example, a <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Pose.html"><code>geometry_msgs/Pose</code></a> is validated, normalized, and instantiated as a strongly-typed <a class="autorefs autorefs-internal" title="Pose" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Pose"><code>mosaicolabs.models.data.Pose</code></a> object before ingestion.</p>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<p>The module is composed of four distinct layers that handle the pipeline from raw file access to server transmission.</p>
+<h3 id="the-loader-layer-rosloader">The Loader Layer (<code>ROSLoader</code>)<a class="headerlink" href="#the-loader-layer-rosloader" title="Permanent link">&para;</a></h3>
+<p>The <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.loader.ROSLoader" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.loader.ROSLoader"><code>ROSLoader</code></a> acts as the abstraction layer over the physical bag files. It utilizes the <a href="https://pypi.org/project/rosbags/"><code>rosbags</code></a> library to provide a unified interface for reading both ROS 1 and ROS 2 formats (<code>.bag</code>, <code>.db3</code>, <code>.mcap</code>).</p>
+<ul>
+<li><strong>Responsibilities:</strong> File I/O, raw deserialization, and topic filtering (supporting glob patterns like <code>/cam/*</code>).</li>
+<li><strong>Error Handling:</strong> It implements configurable policies (<code>IGNORE</code>, <code>LOG_WARN</code>, <code>RAISE</code>) to handle corrupted messages or deserialization failures without crashing the entire pipeline.</li>
+</ul>
+<h3 id="the-adaptation-layer-rosbridge-adapters">The Adaptation Layer (<code>ROSBridge</code> &amp; Adapters)<a class="headerlink" href="#the-adaptation-layer-rosbridge-adapters" title="Permanent link">&para;</a></h3>
+<p>This layer represents the semantic core of the module, translating raw ROS data into the Mosaico Ontology.</p>
+<ul>
+<li><strong><a class="autorefs autorefs-internal" title="ROSAdapterBase" href="../../API_reference/bridges/ros/adapters/base/#mosaicolabs.ros_bridge.adapter_base.ROSAdapterBase"><code>ROSAdapterBase</code></a>:</strong> An abstract base class that establishes the contract for converting specific ROS message types into their corresponding Mosaico Ontology types.</li>
+<li><strong>Concrete Adapters:</strong> The library provides built-in implementations for common standards, such as <a class="autorefs autorefs-internal" title="IMUAdapter" href="../../API_reference/bridges/ros/adapters/sensor_msgs/#mosaicolabs.ros_bridge.adapters.sensor_msgs.IMUAdapter"><code>IMUAdapter</code></a> (mapping <code>sensor_msgs/Imu</code> to <a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.IMU" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU"><code>IMU</code></a>) and <a class="autorefs autorefs-internal" title="ImageAdapter" href="../../API_reference/bridges/ros/adapters/sensor_msgs/#mosaicolabs.ros_bridge.adapters.sensor_msgs.ImageAdapter"><code>ImageAdapter</code></a> (mapping <code>sensor_msgs/Image</code> to <a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.Image" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.Image"><code>Image</code></a>). These adapters include advanced logic for recursive unwrapping, automatically extracting data from complex nested wrappers like <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/PoseWithCovarianceStamped.html"><code>PoseWithCovarianceStamped</code></a>. Developers can also implement custom adapters to handle non-standard or proprietary types.</li>
+<li><strong><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSBridge" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSBridge"><code>ROSBridge</code></a>:</strong> A central registry and dispatch mechanism that maps ROS message type strings (e.g., <a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/Imu.html"><code>sensor_msgs/msg/Imu</code></a>) to their corresponding adapter classes, ensuring the correct translation logic is applied for each message.</li>
+</ul>
+<h4 id="extending-the-bridge-custom-adapters">Extending the Bridge (Custom Adapters)<a class="headerlink" href="#extending-the-bridge-custom-adapters" title="Permanent link">&para;</a></h4>
+<p>Users can extend the bridge to support new ROS message types by implementing a custom adapter and registering it.</p>
+<ol>
+<li><strong>Inherit from <code>ROSAdapterBase</code></strong>: Define the input ROS type string and the target Mosaico Ontology type.</li>
+<li><strong>Implement <code>from_dict</code></strong>: Define the logic to convert the <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSMessage
+
+
+  
+      dataclass
+  " href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSMessage"><code>ROSMessage.data</code></a> dictionary into an intance of the target ontology object.</li>
+<li><strong>Register</strong>: Decorate the class with <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.register_adapter" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.register_adapter"><code>@register_adapter</code></a>.</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs.ros_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROSAdapterBase</span><span class="p">,</span> <span class="n">register_adapter</span><span class="p">,</span> <span class="n">ROSMessage</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">my_ontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyCustomData</span> <span class="c1"># Assuming this class exists</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nd">@register_adapter</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyCustomAdapter</span><span class="p">(</span><span class="n">ROSAdapterBase</span><span class="p">[</span><span class="n">MyCustomData</span><span class="p">]):</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">ros_msgtype</span> <span class="o">=</span> <span class="s2">&quot;my_pkg/msg/MyCustomType&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">__mosaico_ontology_type__</span> <span class="o">=</span> <span class="n">MyCustomData</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="nd">@classmethod</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ros_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyCustomData</span><span class="p">:</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="c1"># Transformation logic here</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="k">return</span> <span class="n">MyCustomData</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="the-orchestrator-rosbaginjector">The Orchestrator (<code>RosbagInjector</code>)<a class="headerlink" href="#the-orchestrator-rosbaginjector" title="Permanent link">&para;</a></h3>
+<p>The <strong><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.RosbagInjector" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.RosbagInjector"><code>RosbagInjector</code></a></strong> is the central command center of the ROS Bridge module. It is designed to be the primary entry point for developers who want to embed high-performance ROS ingestion directly into their Python applications or automation scripts.</p>
+<p>The injector acts as a "glue" layer, orchestrating the interaction between the <strong><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.loader.ROSLoader" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.loader.ROSLoader"><code>ROSLoader</code></a></strong> (file access), the <strong><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSBridge" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSBridge"><code>ROSBridge</code></a></strong> (data adaptation), and the <strong><a class="autorefs autorefs-internal" title="mosaicolabs.comm.MosaicoClient" href="../../API_reference/comm/#mosaicolabs.comm.MosaicoClient"><code>MosaicoClient</code></a></strong> (network transmission). It handles the complex lifecycle of a data upload—including connection management, batching, and transaction safety—while providing real-time feedback through a visual CLI interface.</p>
+<h4 id="core-workflow-execution-run">Core Workflow Execution: <code>run()</code><a class="headerlink" href="#core-workflow-execution-run" title="Permanent link">&para;</a></h4>
+<p>The <code>run()</code> method is the heart of the injector. When called, it initiates a multi-phase pipeline:</p>
+<ol>
+<li><strong>Handshake &amp; Registry</strong>: Establishes a connection to the Mosaico server and registers any provided custom <code>.msg</code> definitions into the global <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSTypeRegistry" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSTypeRegistry"><code>ROSTypeRegistry</code></a>.</li>
+<li><strong>Sequence Creation</strong>: Requests the server to initialize a new data sequence based on the provided name and metadata.</li>
+<li><strong>Adaptive Streaming</strong>: Iterates through the ROS bag records. For each message, it identifies the correct adapter, translates the ROS dictionary into a Mosaico object, and pushes it into an optimized asynchronous write buffer.</li>
+<li><strong>Transaction Finalization</strong>: Once the bag is exhausted, it flushes all remaining buffers and signals the server to commit the sequence.</li>
+</ol>
+<h4 id="the-blueprint-rosinjectionconfig">The Blueprint: <code>ROSInjectionConfig</code><a class="headerlink" href="#the-blueprint-rosinjectionconfig" title="Permanent link">&para;</a></h4>
+<p>The behavior of the injector is entirely driven by the <strong><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSInjectionConfig
+
+
+  
+      dataclass
+  " href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSInjectionConfig"><code>ROSInjectionConfig</code></a></strong>. This configuration object ensures that the ingestion logic is decoupled from the user interface, allowing for consistent behavior whether triggered via the CLI or a complex script.</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>file_path</code></strong></td>
+<td><code>Path</code></td>
+<td>The location of the source ROS bag (<code>.mcap</code>, <code>.db3</code>, or <code>.bag</code>).</td>
+</tr>
+<tr>
+<td><strong><code>sequence_name</code></strong></td>
+<td><code>str</code></td>
+<td>The unique identifier for the sequence on the server.</td>
+</tr>
+<tr>
+<td><strong><code>metadata</code></strong></td>
+<td><code>dict</code></td>
+<td>Searchable tags and context (e.g., <code>{"weather": "rainy"}</code>) attached to the sequence.</td>
+</tr>
+<tr>
+<td><strong><code>ros_distro</code></strong></td>
+<td><a href="https://ternaris.gitlab.io/rosbags/topics/typesys.html#type-stores"><code>Stores</code></a></td>
+<td><strong>Crucial for <code>.db3</code> bags:</strong> Specifies the ROS distribution (e.g., <code>ROS2_HUMBLE</code>) to ensure standard messages are parsed with the correct schema version.</td>
+</tr>
+<tr>
+<td><strong><code>topics</code></strong></td>
+<td><code>List[str]</code></td>
+<td>A filter list supporting glob patterns (e.g., <code>["/camera/*"]</code>). If omitted, all supported topics are ingested.</td>
+</tr>
+<tr>
+<td><strong><code>custom_msgs</code></strong></td>
+<td><code>List</code></td>
+<td>A list of tuples <code>(package, path, store)</code> used to dynamically register proprietary message definitions at runtime.</td>
+</tr>
+<tr>
+<td><strong><code>on_error</code></strong></td>
+<td><a class="autorefs autorefs-internal" title="mosaicolabs.enum.OnErrorPolicy" href="../../API_reference/enum/#mosaicolabs.enum.OnErrorPolicy"><code>OnErrorPolicy</code></a></td>
+<td><strong>Safety Switch:</strong> Determines if a failed upload should <code>Delete</code> the partial sequence or <code>Report</code> the error and keep the data.</td>
+</tr>
+<tr>
+<td><strong><code>log_level</code></strong></td>
+<td><code>str</code></td>
+<td>Controls terminal verbosity, ranging from <code>DEBUG</code> to <code>ERROR</code>.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="practical-example-programmatic-usage">Practical Example: Programmatic Usage<a class="headerlink" href="#practical-example-programmatic-usage" title="Permanent link">&para;</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs.ros_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">RosbagInjector</span><span class="p">,</span> <span class="n">ROSInjectionConfig</span><span class="p">,</span> <span class="n">Stores</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_injection</span><span class="p">():</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="c1"># Define the Injection Configuration</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="c1"># This data class acts as the single source for the operation.</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">config</span> <span class="o">=</span> <span class="n">ROSInjectionConfig</span><span class="p">(</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="c1"># Input Data</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">file_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/session_01.db3&quot;</span><span class="p">),</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="c1"># Target Platform Metadata</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="n">sequence_name</span><span class="o">=</span><span class="s2">&quot;test_ros_sequence&quot;</span><span class="p">,</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>            <span class="s2">&quot;driver_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">,</span> 
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>            <span class="s2">&quot;weather&quot;</span><span class="p">:</span> <span class="s2">&quot;sunny&quot;</span><span class="p">,</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;test_track_A&quot;</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>        <span class="p">},</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>        <span class="c1"># Topic Filtering (supports glob patterns)</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>        <span class="c1"># This will only upload topics starting with &#39;/cam&#39;</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>        <span class="n">topics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/cam*&quot;</span><span class="p">],</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>        <span class="c1"># ROS Configuration</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>        <span class="c1"># Specifying the distro ensures correct parsing of standard messages</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>        <span class="c1"># (.db3 sqlite3 rosbags need the specification of distro)</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>        <span class="n">ros_distro</span><span class="o">=</span><span class="n">Stores</span><span class="o">.</span><span class="n">ROS2_HUMBLE</span><span class="p">,</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="c1"># Custom Message Registration</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>        <span class="c1"># Register proprietary messages before loading to prevent errors</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>        <span class="n">custom_msgs</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>            <span class="p">(</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>                <span class="s2">&quot;my_custom_pkg&quot;</span><span class="p">,</span>                 <span class="c1"># ROS Package Name</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>                <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./definitions/my_pkg/&quot;</span><span class="p">),</span>   <span class="c1"># Path to directory containing .msg files</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>                <span class="n">Stores</span><span class="o">.</span><span class="n">ROS2_HUMBLE</span><span class="p">,</span>              <span class="c1"># Scope (valid for this distro)</span>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>            <span class="p">)</span> <span class="c1"># registry will automatically infer type names as `my_custom_pkg/msg/{filename}`</span>
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>        <span class="p">],</span>
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>        <span class="c1"># Execution Settings</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>        <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>  <span class="c1"># Reduce verbosity for automated scripts</span>
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>    <span class="p">)</span>
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>    <span class="c1"># Instantiate the Controller</span>
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>    <span class="n">injector</span> <span class="o">=</span> <span class="n">RosbagInjector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="__span-1-44"><a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>
+</span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>    <span class="c1"># Execute</span>
+</span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a>    <span class="c1"># The run method handles connection, loading, and uploading automatically.</span>
+</span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>    <span class="c1"># It raises exceptions for fatal errors, allowing you to wrap it in try/except blocks.</span>
+</span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a>        <span class="n">injector</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Injection job completed successfully.&quot;</span><span class="p">)</span>
+</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Injection job failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-1-53"><a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a>
+</span><span id="__span-1-54"><a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a><span class="c1"># Use as script or call the injection function in your code</span>
+</span><span id="__span-1-55"><a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="__span-1-56"><a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a>    <span class="n">run_injection</span><span class="p">()</span>
+</span></code></pre></div>
+<h4 id="cli-usage">CLI Usage<a class="headerlink" href="#cli-usage" title="Permanent link">&para;</a></h4>
+<p>The module includes a command-line interface for quick ingestion tasks. The full list of options can be retrieved by running <code>mosaico.ros_injector -h</code></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Basic Usage</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>poetry<span class="w"> </span>run<span class="w"> </span>mosaico.ros_injector<span class="w"> </span>./data.mcap<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;Test_Run_01&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Advanced Usage: Filtering topics and adding metadata</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>poetry<span class="w"> </span>run<span class="w"> </span>mosaico.ros_injector<span class="w"> </span>./data.db3<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>--name<span class="w"> </span><span class="s2">&quot;Test_Run_01&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span>--topics<span class="w"> </span>/camera/front/*<span class="w"> </span>/gps/fix<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span>--metadata<span class="w"> </span>./metadata.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>--ros-distro<span class="w"> </span>ros2_humble
+</span></code></pre></div>
+<h3 id="the-type-registry-rostyperegistry">The Type Registry (<code>ROSTypeRegistry</code>)<a class="headerlink" href="#the-type-registry-rostyperegistry" title="Permanent link">&para;</a></h3>
+<p>The <strong><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSTypeRegistry" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSTypeRegistry"><code>ROSTypeRegistry</code></a></strong> is a context-aware singleton designed to manage the schemas required to decode ROS data. ROS message definitions are frequently external to the data files themselves—this is especially true for ROS 2 <code>.db3</code> (SQLite) formats and proprietary datasets containing custom sensors. Without these definitions, the bridge cannot deserialize the raw binary "blobs" into readable dictionaries.</p>
+<ul>
+<li><strong>Schema Resolution</strong>: It allows the <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.loader.ROSLoader" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.loader.ROSLoader"><code>ROSLoader</code></a> to resolve custom <code>.msg</code> definitions on-the-fly during bag playback.</li>
+<li><strong>Version Isolation (Stores)</strong>: ROS messages often vary across distributions (e.g., a "Header" in ROS 1 Noetic is structurally different from ROS 2 Humble). The registry uses a "Profile" system to store these version-specific definitions separately, preventing cross-distribution conflicts.</li>
+<li><strong>Global vs. Scoped Definitions</strong>: You can register definitions <strong>Globally</strong> (available to all loaders) or <strong>Scoped</strong> to a specific distribution.</li>
+</ul>
+<h4 id="pre-loading-definitions">Pre-loading Definitions<a class="headerlink" href="#pre-loading-definitions" title="Permanent link">&para;</a></h4>
+<p>While you can pass custom messages via <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSInjectionConfig
+
+
+  
+      dataclass
+  " href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSInjectionConfig"><code>ROSInjectionConfig</code></a>, it can become cumbersome for large-scale projects with hundreds of proprietary types. The recommended approach is to pre-load the registry at the start of your application. This makes the definitions available to all subsequent loaders automatically.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Scope</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>register(...)</code></strong></td>
+<td>Single Message</td>
+<td>Registers a single custom type. The source can be a path to a <code>.msg</code> file or a raw string containing the definition.</td>
+</tr>
+<tr>
+<td><strong><code>register_directory(...)</code></strong></td>
+<td>Batch Package</td>
+<td>Scans a directory for all <code>.msg</code> files and registers them under a specific package name (e.g., <code>my_pkg/msg/Sensor</code>).</td>
+</tr>
+<tr>
+<td><strong><code>get_types(...)</code></strong></td>
+<td>Internal</td>
+<td>Implements a "Cascade" logic: merges Global definitions with distribution-specific overrides for a loader.</td>
+</tr>
+<tr>
+<td><strong><code>reset()</code></strong></td>
+<td>Utility</td>
+<td>Clears all stored definitions. Primarily used for unit testing to ensure process isolation.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="centralized-registration-example">Centralized Registration Example<a class="headerlink" href="#centralized-registration-example" title="Permanent link">&para;</a></h4>
+<p>A clean way to manage large projects is to centralize your message registration in a single setup function (e.g., <code>setup_registry.py</code>):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs.ros_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROSTypeRegistry</span><span class="p">,</span> <span class="n">Stores</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">initialize_project_schemas</span><span class="p">():</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="c1"># 1. Register a proprietary message valid for all ROS versions</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">ROSTypeRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="n">msg_type</span><span class="o">=</span><span class="s2">&quot;common_msgs/msg/SystemHeartbeat&quot;</span><span class="p">,</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="n">source</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./definitions/Heartbeat.msg&quot;</span><span class="p">)</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="p">)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="c1"># 2. Batch register an entire package for ROS 2 Humble</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">ROSTypeRegistry</span><span class="o">.</span><span class="n">register_directory</span><span class="p">(</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="n">package_name</span><span class="o">=</span><span class="s2">&quot;robot_v3_msgs&quot;</span><span class="p">,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        <span class="n">dir_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./definitions/robot_v3/msgs&quot;</span><span class="p">),</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="n">store</span><span class="o">=</span><span class="n">Stores</span><span class="o">.</span><span class="n">ROS2_HUMBLE</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="p">)</span>
+</span></code></pre></div>
+<p>Once registered, the <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.RosbagInjector" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.RosbagInjector"><code>RosbagInjector</code></a> (and the underlying <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.loader.ROSLoader" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.loader.ROSLoader"><code>ROSLoader</code></a>) automatically detects and uses these definitions. There is no longer the need to pass the <code>custom_msgs</code> list in the <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSInjectionConfig
+
+
+  
+      dataclass
+  " href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSInjectionConfig"><code>ROSInjectionConfig</code></a>.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># main_injection.py</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">setup_registry</span>  <span class="c1"># Runs the registration logic above</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mosaicolabs.ros_bridge</span><span class="w"> </span><span class="kn">import</span> <span class="n">RosbagInjector</span><span class="p">,</span> <span class="n">ROSInjectionConfig</span><span class="p">,</span> <span class="n">Stores</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Initialize registry</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">setup_registry</span><span class="o">.</span><span class="n">initialize_project_schemas</span><span class="p">()</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Configure injection WITHOUT listing custom messages again</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">config</span> <span class="o">=</span> <span class="n">ROSInjectionConfig</span><span class="p">(</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">file_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;mission_data.mcap&quot;</span><span class="p">),</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">sequence_name</span><span class="o">=</span><span class="s2">&quot;mission_01&quot;</span><span class="p">,</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;operator&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">},</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    <span class="n">ros_distro</span><span class="o">=</span><span class="n">Stores</span><span class="o">.</span><span class="n">ROS2_HUMBLE</span><span class="p">,</span>  <span class="c1"># Loader will pull the Humble-specific types we registered</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="c1"># custom_msgs=[]  &lt;-- No longer needed!</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="p">)</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">injector</span> <span class="o">=</span> <span class="n">RosbagInjector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="n">injector</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span></code></pre></div>
+<h3 id="testing-validation">Testing &amp; Validation<a class="headerlink" href="#testing-validation" title="Permanent link">&para;</a></h3>
+<p>The ROS Bag Injection module has been validated against a variety of standard datasets to ensure compatibility with different ROS distributions, message serialization formats (CDR/ROS 1), and bag container formats (<code>.bag</code>, <code>.mcap</code>, <code>.db3</code>).</p>
+<h4 id="recommended-dataset-for-verification">Recommended Dataset for Verification<a class="headerlink" href="#recommended-dataset-for-verification" title="Permanent link">&para;</a></h4>
+<p>For evaluating Mosaico capabilities, we recommend the <strong><a href="https://catalog.ngc.nvidia.com/orgs/nvidia/teams/isaac/resources/r2bdataset2024?version=1">NVIDIA NGC Catalog - R2B Dataset 2024</a></strong>. This dataset has been verified to be fully compatible with the injection pipeline.</p>
+<p>The following table details the injection performance for the <strong>NVIDIA R2B Dataset 2024</strong>. These benchmarks were captured on a system running <strong>macOS 26.2</strong> with an <strong>Apple M2 Pro (10 cores, 16GB RAM)</strong>.</p>
+<h4 id="nvidia-r2b-dataset-2024-injection-performance">NVIDIA R2B Dataset 2024 Injection Performance<a class="headerlink" href="#nvidia-r2b-dataset-2024-injection-performance" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Sequence Name</th>
+<th>Compression Factor</th>
+<th>Injection Time</th>
+<th>Hardware Architecture</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>r2b_galileo2</code></strong></td>
+<td>~70%</td>
+<td>~40 sec</td>
+<td>Apple M2 Pro (16GB)</td>
+<td>High compression achieved for telemetry data.</td>
+</tr>
+<tr>
+<td><strong><code>r2b_galileo</code></strong></td>
+<td>~1%</td>
+<td>~30 sec</td>
+<td>Apple M2 Pro (16GB)</td>
+<td>Low compression due to pre-compressed source images.</td>
+</tr>
+<tr>
+<td><strong><code>r2b_robotarm</code></strong></td>
+<td>~66%</td>
+<td>~50 sec</td>
+<td>Apple M2 Pro (16GB)</td>
+<td>High efficiency for high-frequency state updates.</td>
+</tr>
+<tr>
+<td><strong><code>r2b_whitetunnel</code></strong></td>
+<td>~1%</td>
+<td>~30 sec</td>
+<td>Apple M2 Pro (16GB)</td>
+<td>Low compression; contains topics with no available adapter.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="understanding-performance-factors">Understanding Performance Factors<a class="headerlink" href="#understanding-performance-factors" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Compression Factors</strong>: Sequences like <code>r2b_galileo2</code> achieve high ratios (~70%) because Mosaico optimizes the underlying columnar storage for scalar telemetry. Conversely, sequences with pre-compressed video feeds show minimal gains (~1%) because the data is already in a dense format.</li>
+<li><strong>Injection Time</strong>: This metric includes the overhead of local MCAP/DB3 deserialization via <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.loader.ROSLoader" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.loader.ROSLoader"><code>ROSLoader</code></a>, semantic translation through the <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.ROSBridge" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.ROSBridge"><code>ROSBridge</code></a>, and the asynchronous transmission to the Mosaico server.</li>
+<li><strong>Hardware Impact</strong>: On the <strong>Apple M2 Pro</strong>, the <a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.RosbagInjector" href="../../API_reference/bridges/ros/ros/#mosaicolabs.ros_bridge.RosbagInjector"><code>RosbagInjector</code></a> utilizes multi-threading for the <strong>Adaptation Layer</strong>, allowing serialization tasks to run in parallel while the main thread manages the Flight stream.</li>
+</ul>
+<h4 id="known-issues-limitations">Known Issues &amp; Limitations<a class="headerlink" href="#known-issues-limitations" title="Permanent link">&para;</a></h4>
+<p>While the underlying <code>rosbags</code> library supports the majority of standard ROS 2 bag files, specific datasets with non-standard serialization alignment or proprietary encodings may encounter compatibility issues.</p>
+<p><strong>NVIDIA Isaac ROS Benchmark Dataset (2023)</strong></p>
+<ul>
+<li><strong>Source:</strong> <a href="https://catalog.ngc.nvidia.com/orgs/nvidia/teams/isaac/resources/r2bdataset2023">NVIDIA NGC Catalog - R2B Dataset 2023</a></li>
+<li><strong>Issue:</strong> Deserialization failure during ingestion.</li>
+<li><strong>Technical Details:</strong> The ingestion process fails within the <a href="https://ternaris.gitlab.io/rosbags/api/rosbags.highlevel.html#rosbags.highlevel.AnyReader.deserialize"><code>AnyReader.deserialize</code></a> method of the <a href="https://ternaris.gitlab.io/rosbags/index.html"><code>rosbags</code></a> library. The internal CDR deserializer triggers an assertion error indicating a mismatch in the expected data length vs. the raw payload size.</li>
+<li><strong>Error Signature:</strong>
+    <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># In rosbags.serde.cdr:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">assert</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawdata</span><span class="p">)</span>
+</span></code></pre></div></li>
+<li><strong>Recommendation:</strong> This issue originates in the upstream parser handling of this specific dataset's serialization alignment. It is currently recommended to exclude this dataset or transcode it using standard ROS 2 tools before ingestion.</li>
+</ul>
+<h2 id="supported-message-types">Supported Message Types<a class="headerlink" href="#supported-message-types" title="Permanent link">&para;</a></h2>
+<p><strong><em>ROS-Specific Data Models</em></strong></p>
+<p>In addition to mapping standard ROS messages to the core Mosaico ontology, the <code>ros-bridge</code> module implements two specialized data models. These are defined specifically for this module to handle ROS-native concepts that are not yet part of the official Mosaico standard:</p>
+<ul>
+<li><strong><code>FrameTransform</code></strong>: Designed to handle coordinate frame transformations (modeled after <a href="https://docs.ros2.org/foxy/api/tf2_msgs/msg/TFMessage.html"><code>tf2_msgs/msg/TFMessage</code></a>). It encapsulates a list of <a class="autorefs autorefs-internal" title="Transform" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Transform"><code>Transform</code></a> objects to manage spatial relationships.</li>
+<li><strong><code>BatteryState</code></strong>: Modeled after <a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/BatteryState.html"><code>sensor_msgs/msg/BatteryState</code></a>), this class captures comprehensive power supply metrics. It includes core data (voltage, current, capacity, percentage) and detailed metadata such as power supply health, technology status, and individual cell readings.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Although these are provisional additions, both <code>FrameTransform</code> and <code>BatteryState</code> inherit from <a class="autorefs autorefs-internal" title="mosaicolabs.models.Serializable" href="../../API_reference/models/base/#mosaicolabs.models.Serializable"><code>Serializable</code></a> and <a class="autorefs autorefs-internal" title="mosaicolabs.models.HeaderMixin" href="../../API_reference/models/base/#mosaicolabs.models.HeaderMixin"><code>HeaderMixin</code></a>. This ensures they remain fully compatible with Mosaico’s existing serialization and header management infrastructure.</p>
+</blockquote>
+<h3 id="supported-message-types-table">Supported Message Types Table<a class="headerlink" href="#supported-message-types-table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ROS Message Type</th>
+<th style="text-align: left;">Mosaico Ontology Type</th>
+<th style="text-align: left;">Adapter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Pose.html"><code>geometry_msgs/Pose</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/PoseStamped.html"><code>PoseStamped</code></a>...</td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Pose" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Pose"><code>Pose</code></a></td>
+<td style="text-align: left;"><code>PoseAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Twist.html"><code>geometry_msgs/Twist</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/TwistStamped.html"><code>TwistStamped</code></a>...</td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Velocity" href="../../API_reference/models/geometry/#mosaicolabs.models.data.kinematics.Velocity"><code>Velocity</code></a></td>
+<td style="text-align: left;"><code>TwistAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Accel.html"><code>geometry_msgs/Accel</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/AccelStamped.html"><code>AccelStamped</code></a>...</td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Acceleration" href="../../API_reference/models/geometry/#mosaicolabs.models.data.kinematics.Acceleration"><code>Acceleration</code></a></td>
+<td style="text-align: left;"><code>AccelAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Vector3.html"><code>geometry_msgs/Vector3</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Vector3Stamped.html"><code>Vector3Stamped</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Vector3d" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Vector3d"><code>Vector3d</code></a></td>
+<td style="text-align: left;"><code>Vector3Adapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Point.html"><code>geometry_msgs/Point</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/PointStamped.html"><code>PointStamped</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Point3d" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Point3d"><code>Point3d</code></a></td>
+<td style="text-align: left;"><code>PointAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Quaternion.html"><code>geometry_msgs/Quaternion</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/QuaternionStamped.html"><code>QuaternionStamped</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Quaternion" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Quaternion"><code>Quaternion</code></a></td>
+<td style="text-align: left;"><code>QuaternionAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Transform.html"><code>geometry_msgs/Transform</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/TransformStamped.html"><code>TransformStamped</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Transform" href="../../API_reference/models/geometry/#mosaicolabs.models.data.geometry.Transform"><code>Transform</code></a></td>
+<td style="text-align: left;"><code>TransformAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/Wrench.html"><code>geometry_msgs/Wrench</code></a>, <a href="https://docs.ros2.org/foxy/api/geometry_msgs/msg/WrenchStamped.html"><code>WrenchStamped</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="ForceTorque" href="../../API_reference/models/geometry/#mosaicolabs.models.data.dynamics.ForceTorque"><code>ForceTorque</code></a></td>
+<td style="text-align: left;"><code>WrenchAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/nav_msgs/msg/Odometry.html"><code>nav_msgs/Odometry</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="MotionState" href="../../API_reference/models/geometry/#mosaicolabs.models.data.kinematics.MotionState"><code>MotionState</code></a></td>
+<td style="text-align: left;"><code>OdometryAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/nmea_msgs/msg/Sentence.html"><code>nmea_msgs/Sentence</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.NMEASentence" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.NMEASentence"><code>NMEASentence</code></a></td>
+<td style="text-align: left;"><code>NMEASentenceAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/Image.html"><code>sensor_msgs/Image</code></a>, <a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/CompressedImage.html"><code>CompressedImage</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.Image" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.Image"><code>Image</code></a>, <a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.CompressedImage" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.CompressedImage"><code>CompressedImage</code></a></td>
+<td style="text-align: left;"><code>ImageAdapter</code>, <code>CompressedImageAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/Imu.html"><code>sensor_msgs/Imu</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.IMU" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.IMU"><code>IMU</code></a></td>
+<td style="text-align: left;"><code>IMUAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/NavSatFix.html"><code>sensor_msgs/NavSatFix</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.GPS" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.GPS"><code>GPS</code></a>, <a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.GPSStatus" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.GPSStatus"><code>GPSStatus</code></a></td>
+<td style="text-align: left;"><code>GPSAdapter</code>, <code>NavSatStatusAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/CameraInfo.html"><code>sensor_msgs/CameraInfo</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.CameraInfo" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.CameraInfo"><code>CameraInfo</code></a></td>
+<td style="text-align: left;"><code>CameraInfoAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/RegionOfInterest.html"><code>sensor_msgs/RegionOfInterest</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.data.ROI" href="../../API_reference/models/data_types/#mosaicolabs.models.data.ROI"><code>ROI</code></a></td>
+<td style="text-align: left;"><code>ROIAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/JointState.html"><code>sensor_msgs/JointState</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.models.sensors.RobotJoint" href="../../API_reference/models/sensors/#mosaicolabs.models.sensors.RobotJoint"><code>RobotJoint</code></a></td>
+<td style="text-align: left;"><code>RobotJointAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/sensor_msgs/msg/BatteryState.html"><code>sensor_msgs/BatteryState</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.data_ontology.BatteryState" href="../../API_reference/bridges/ros/custom_ontology/#mosaicolabs.ros_bridge.data_ontology.BatteryState"><code>BatteryState</code></a> (ROS-specific)</td>
+<td style="text-align: left;"><code>BatteryStateAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/std_msgs/msg/String.html"><code>std_msgs/msg/String</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="String" href="../../API_reference/models/data_types/#mosaicolabs.models.data.base_types.String"><code>String</code></a></td>
+<td style="text-align: left;"><code>_GenericStdAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/std_msgs/msg/Int8.html"><code>std_msgs/msg/Int8(16,32,64)</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Integer8" href="../../API_reference/models/data_types/#mosaicolabs.models.data.base_types.Integer8"><code>Integer8(16,32,64)</code></a></td>
+<td style="text-align: left;"><code>_GenericStdAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/std_msgs/msg/UInt8.html"><code>std_msgs/msg/UInt8(16,32,64)</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Unsigned8" href="../../API_reference/models/data_types/#mosaicolabs.models.data.base_types.Unsigned8"><code>Unsigned8(16,32,64)</code></a></td>
+<td style="text-align: left;"><code>_GenericStdAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/std_msgs/msg/Float32.html"><code>std_msgs/msg/Float32(64)</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Floating32" href="../../API_reference/models/data_types/#mosaicolabs.models.data.base_types.Floating32"><code>Floating32(64)</code></a></td>
+<td style="text-align: left;"><code>_GenericStdAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/std_msgs/msg/Bool.html"><code>std_msgs/msg/Bool</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="Boolean" href="../../API_reference/models/data_types/#mosaicolabs.models.data.base_types.Boolean"><code>Boolean</code></a></td>
+<td style="text-align: left;"><code>_GenericStdAdapter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://docs.ros2.org/foxy/api/tf2_msgs/msg/TFMessage.html"><code>tf2_msgs/msg/TFMessage</code></a></td>
+<td style="text-align: left;"><a class="autorefs autorefs-internal" title="mosaicolabs.ros_bridge.data_ontology.FrameTransform" href="../../API_reference/bridges/ros/custom_ontology/#mosaicolabs.ros_bridge.data_ontology.FrameTransform"><code>FrameTransform</code></a> (ROS-specific)</td>
+<td style="text-align: left;"><code>FrameTransformAdapter</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../ml/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Machine Learning &amp; Analytics">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Machine Learning & Analytics
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../API_reference/comm/" class="md-footer__link md-footer__link--next" aria-label="Next: Communication Module">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Communication Module
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.instant", "navigation.sections", "navigation.path", "navigation.indexes", "navigation.tabs", "navigation.footer"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
