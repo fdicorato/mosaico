@@ -1,4 +1,7 @@
-# Querying Topics by Name and Metadata
+---
+title: Querying Topics by Name and Metadata
+description: Example how-to for Querying Topics by Name and Metadata
+---
 
 This guide demonstrates how to locate specific recording sessions based on their naming conventions and custom user metadata tags. This is the most common entry point for data discovery, allowing you to isolate sessions that match specific environmental or project conditions.
 

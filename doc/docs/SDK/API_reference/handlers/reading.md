@@ -1,4 +1,7 @@
-# Data Retrieval
+---
+title: Data Retrieval
+description: API Reference for Data Retrieval
+---
 
 ::: mosaicolabs.handlers.system_info.SystemInfo
 ::: mosaicolabs.handlers.SequenceHandler

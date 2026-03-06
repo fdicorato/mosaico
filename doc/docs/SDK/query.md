@@ -1,6 +1,6 @@
 ---
 title: Querying Catalogs
-description: The Query mechanism
+description: The Query Architecture and Mechanism
 ---
 
 The **Query Module** provides a high-performance, **fluent** interface for discovering and filtering data within the Mosaico Data Platform. It is designed to move beyond simple keyword searches, allowing you to perform deep, semantic queries across metadata, system catalogs, and the physical content of sensor streams.

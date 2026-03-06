@@ -1,4 +1,8 @@
-# Platform Models
+---
+title: Platform Models
+description: API Reference for Platform Models
+---
+
 ::: mosaicolabs.models.platform.Topic
     options:
       inherited_members: true

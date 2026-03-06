@@ -1,4 +1,7 @@
-# Complex Chained Queries
+---
+title: Complex Chained Queries
+description: Example how-to for Complex Chained Queries
+---
 
 Sometimes a single query is insufficient because you need to correlate data across different topics. This guide demonstrates **Query Chaining**, a technique where the results of one search are used to "lock" the domain for a second, more specific search.
 

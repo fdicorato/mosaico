@@ -1,4 +1,7 @@
-# Detecting Events in Time-Series Data
+---
+title: Detecting Events in Time-Series Data
+description: Example how-to for Detecting Events in Time-Series Data
+---
 
 Beyond metadata, the Mosaico platform allows for deep inspection of actual sensor payloads. This guide shows how to search for specific physical events, such as high-impact accelerations, across your entire data catalog.
 

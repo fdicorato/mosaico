@@ -1,4 +1,8 @@
-# Multi-Domain Querying
+---
+title: Multi-Domain Querying
+description: Example how-to for Multi-Domain Querying
+---
+
 
 This guide demonstrates how to orchestrate a **Unified Query** across three distinct layers of the Mosaico Data Platform: the **Sequence** (session metadata), the **Topic** (channel configuration), and the **Ontology Catalog** (actual sensor data). By combining these builders in a single request, you can perform highly targeted searches that correlate mission-level context with specific sensor events.
 
