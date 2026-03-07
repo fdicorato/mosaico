@@ -67,7 +67,7 @@ def on_page_content(html, page, config, files):
 
 
 def on_post_build(config):
-    output_path = os.path.join(config["site_dir"], "llm.md")
+    output_path = os.path.join(config["site_dir"], "llms-full.txt")
 
     with open(output_path, "w", encoding="utf-8") as f:
         # AI SYSTEM HEADER
